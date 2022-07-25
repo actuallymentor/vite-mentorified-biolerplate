@@ -5,9 +5,7 @@
   },
   "hosting": {
     "public": "build",
-    "rewrites": [
-      
-    ],
+    "rewrites": [],
     "ignore": [
       "firebase.json",
       "**/.*",
