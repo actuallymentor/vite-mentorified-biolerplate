@@ -1,4 +1,4 @@
-# Create React APp with Mentor's favorite extensions
+# Create React App with Mentor's favorite extensions
 
 This project extends [Create React App](https://github.com/facebook/create-react-app).
 
