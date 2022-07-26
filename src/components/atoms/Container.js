@@ -11,6 +11,7 @@ export default styled.div`
 	width: 100%;
 	padding:  0 max( 1rem, calc( 25vw - 8rem ) );
 	box-sizing: border-box;
+	background-color: ${ ( { theme } ) => theme.colors.backdrop };
 	& * {
 		box-sizing: border-box;
 	}
