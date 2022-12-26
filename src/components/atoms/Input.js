@@ -12,6 +12,7 @@ const Input = styled.span`
 		background: ${ ( { theme } ) => theme.colors.backdrop };
 		border: none;
 		border-left: 2px solid ${ ( { theme, highlight } ) => highlight ? theme.colors.accent : theme.colors.primary };
+		color: ${ ( { theme } ) => theme.colors.text };
 	}
 
 	& select, input, & p {
