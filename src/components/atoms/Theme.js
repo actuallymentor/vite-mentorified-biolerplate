@@ -42,7 +42,7 @@ export default props => {
 		// Enable a listener
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener( 'change', event => {
 			log( 'Darkmode setting changed to ', event.matches )
-			setDark( event.matches == 'dark' )
+			setDark( event.matches )
 		})
 
 	}, [] )
