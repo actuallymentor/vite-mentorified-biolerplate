@@ -11,7 +11,7 @@ export default function Homepage() {
 
         <Hero>
             <H1>This is a boilerplate</H1>
-            <H2>It doesn't do much</H2>
+            <H2>It doesn&apos;t do much</H2>
         </Hero>
 
     </Container>

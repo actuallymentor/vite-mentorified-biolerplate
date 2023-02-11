@@ -4,13 +4,13 @@ context( "Frontpage tests", () => {
 
     it( 'Can view', () => {
 
-		// Visit code claim page
-		cy.visit( `/` )
+        // Visit code claim page
+        cy.visit( `/` )
 
-		// Page renders
+        // Page renders
         cy.contains( `Home` )
 
-	} )
+    } )
 
 
 } )

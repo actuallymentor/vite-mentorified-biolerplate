@@ -14,13 +14,13 @@ import { log, dev } from './helpers'
 // Firebase config
 const { REACT_APP_apiKey, REACT_APP_authDomain, REACT_APP_projectId, REACT_APP_storageBucket, REACT_APP_messagingSenderId, REACT_APP_appId, REACT_APP_measurementId, REACT_APP_recaptcha_site_key, REACT_APP_APPCHECK_DEBUG_TOKEN } = process.env
 const config = {
-	apiKey: REACT_APP_apiKey,
-	authDomain: REACT_APP_authDomain,
-	projectId: REACT_APP_projectId,
-	storageBucket: REACT_APP_storageBucket,
-	messagingSenderId: REACT_APP_messagingSenderId,
-	appId: REACT_APP_appId,
-	measurementId: REACT_APP_measurementId
+    apiKey: REACT_APP_apiKey,
+    authDomain: REACT_APP_authDomain,
+    projectId: REACT_APP_projectId,
+    storageBucket: REACT_APP_storageBucket,
+    messagingSenderId: REACT_APP_messagingSenderId,
+    appId: REACT_APP_appId,
+    measurementId: REACT_APP_measurementId
 }
 
 log( 'Init firebase with ', config )
@@ -46,8 +46,8 @@ const functions = getFunctions( app )
 // Offline functions emulator
 // Connect to functions emulator
 if( process.env.REACT_APP_useEmulator ) {
-	connectFunctionsEmulator( functions, 'localhost', 5001 )
-	log( `Using firebase functions emulator` )
+    connectFunctionsEmulator( functions, 'localhost', 5001 )
+    log( `Using firebase functions emulator` )
 }
 
 
@@ -60,15 +60,15 @@ if( process.env.REACT_APP_useEmulator ) {
 */
 export function listen_to_document( collection, document, callback ) {
 
-	const d = doc( db, collection, document )
+    const d = doc( db, collection, document )
 
-	return onSnapshot( d, snap => {
+    return onSnapshot( d, snap => {
 
-		const data = snap.data()
-		log( `Retreived document ${collection}/${document}: `, data )
-		callback( data )
+        const data = snap.data()
+        log( `Retreived document ${ collection }/${ document }: `, data )
+        callback( data )
 
-	} )
+    } )
 
 }
 
@@ -76,7 +76,7 @@ export function listen_to_document( collection, document, callback ) {
 // Analytics actions
 // ///////////////////////////////
 export function track_event( name ) {
-	if( !name ) return
-	if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
-	logEvent( analytics, name )
+    if( !name ) return
+    if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
+    logEvent( analytics, name )
 }

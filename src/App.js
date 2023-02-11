@@ -1,6 +1,6 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import Theme from './components/atoms/Theme'
-import Homepage from './components/organisms/Homepage'
+import Homepage from './components/pages/Homepage'
 import { listen_to_document } from './modules/firebase'
 
 // ///////////////////////////////
@@ -8,18 +8,18 @@ import { listen_to_document } from './modules/firebase'
 // ///////////////////////////////
 export default function App( ) {
 
-  return <Theme>
+    return <Theme>
 
-      <Router>
+        <Router>
 
-        <Routes>
+            <Routes>
 
-          <Route exact path='/' element={ <Homepage /> } />
+                <Route exact path='/' element={ <Homepage /> } />
 
-        </Routes>
+            </Routes>
 
-      </Router>
+        </Router>
 
-  </Theme>
+    </Theme>
   
 }
