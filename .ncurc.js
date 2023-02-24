@@ -6,7 +6,7 @@ module.exports = {
     upgrade: true,
     target: 'minor',
     // Which test to run between every upgrade
-    doctor: true,
+    doctor: false,
     doctorTest: 'npm run test:ci:with_emulator',
     reject: [
         '@rainbow-me/rainbowkit',
