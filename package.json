@@ -11,14 +11,18 @@
     "styled-components": "^5.3.6"
   },
   "scripts": {
-    "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
+    "start": "BROWSER=none DISABLE_ESLINT_PLUGIN=true react-scripts start | grep -i compiled",
+    "start:functions": "cd functions && npm run serve",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "cypress": "NODE_ENV=development $(npm bin)/cypress open --e2e --browser chrome",
-    "test": "CYPRESS_LOCAL=true NODE_ENV=development start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --browser chrome\"",
-    "test:production": "npm run build && NODE_ENV=production start-server-and-test 'serve build' 3000 \"$(npm bin)/cypress open --browser chrome\"",
-    "test:ci": "NODE_ENV=production CI=true start-server-and-test 'BROWSER=none npm start' 3000 \"$(npm bin)/cypress run --browser chrome --config 60000\"",
+    "cypress:open": "NODE_ENV=development $(npm bin)/cypress open --e2e --browser chrome",
+    "cypress:run": "CYPRESS_LOCAL=true NODE_ENV=development $(npm bin)/cypress run --browser chrome",
+    "test": "server-test 'start' 3000 'cypress:open'",
+    "test:production": "npm run build && NODE_ENV=production server-test 'serve build' 3000 'cypress:open'",
+    "test:ci": "NODE_ENV=production CI=true server-test 'start' 3000 'cypress:run'",
+    "test:ci:with_emulator": "NODE_ENV=production server-test 'start' 3000 'start:functions' 4000 'cypress:run'",
     "prepare": "husky install",
-    "lint": "eslint --fix src"
+    "lint": "eslint --fix src",
+    "upgrade": "npx update-browserslist-db@latest && ncu && npm list outdated"
   },
   "eslintConfig": {
     "extends": [
@@ -40,10 +44,12 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-react": "^7.18.6",
-    "@poap/skunk-linter": "^0.0.1",
-    "cypress": "^12.5.1",
+    "@poap/skunk-linter": "^0.0.2",
+    "cypress": "^12.6.0",
     "eslint": "^8.34.0",
     "eslint-plugin-react": "^7.32.2",
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+    "npm-check-updates": "^16.7.9",
+    "start-server-and-test": "^1.15.4"
   }
 }
