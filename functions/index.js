@@ -1,5 +1,5 @@
 const functions = require( "firebase-functions" )
-const { log } = require( './modules' )
+const { log } = require( './modules/helpers' )
 const { throw_if_invalid_context } = require( './modules/firebase' )
 
 exports.do_a_thing = functions.https.onCall( async ( data, context ) => {
