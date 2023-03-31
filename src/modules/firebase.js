@@ -12,15 +12,15 @@ import { log, dev } from './helpers'
 // ///////////////////////////////
 
 // Firebase config
-const { REACT_APP_apiKey, REACT_APP_authDomain, REACT_APP_projectId, REACT_APP_storageBucket, REACT_APP_messagingSenderId, REACT_APP_appId, REACT_APP_measurementId, REACT_APP_recaptcha_site_key, REACT_APP_APPCHECK_DEBUG_TOKEN } = process.env
+const { VITE_apiKey, VITE_authDomain, VITE_projectId, VITE_storageBucket, VITE_messagingSenderId, VITE_appId, VITE_measurementId, VITE_recaptcha_site_key, VITE_APPCHECK_DEBUG_TOKEN } = process.env
 const config = {
-    apiKey: REACT_APP_apiKey,
-    authDomain: REACT_APP_authDomain,
-    projectId: REACT_APP_projectId,
-    storageBucket: REACT_APP_storageBucket,
-    messagingSenderId: REACT_APP_messagingSenderId,
-    appId: REACT_APP_appId,
-    measurementId: REACT_APP_measurementId
+    apiKey: VITE_apiKey,
+    authDomain: VITE_authDomain,
+    projectId: VITE_projectId,
+    storageBucket: VITE_storageBucket,
+    messagingSenderId: VITE_messagingSenderId,
+    appId: VITE_appId,
+    measurementId: VITE_measurementId
 }
 
 log( 'Init firebase with ', config )
@@ -32,10 +32,10 @@ const db = getFirestore( app )
 const functions = getFunctions( app )
 
 // App check config
-// if( process.env.NODE_ENV === 'development' || REACT_APP_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = REACT_APP_APPCHECK_DEBUG_TOKEN || true
-// log( 'Initialising app check with ', REACT_APP_APPCHECK_DEBUG_TOKEN )
+// if( process.env.NODE_ENV === 'development' || VITE_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
+// log( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
 // const appcheck = initializeAppCheck( app, {
-// 	provider: new ReCaptchaV3Provider( REACT_APP_recaptcha_site_key ),
+// 	provider: new ReCaptchaV3Provider( VITE_recaptcha_site_key ),
 // 	isTokenAutoRefreshEnabled: true
 // } )
 
@@ -45,7 +45,7 @@ const functions = getFunctions( app )
 
 // Offline functions emulator
 // Connect to functions emulator
-if( process.env.REACT_APP_useEmulator ) {
+if( process.env.VITE_useEmulator ) {
     connectFunctionsEmulator( functions, 'localhost', 5001 )
     log( `Using firebase functions emulator` )
 }
