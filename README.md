@@ -1,6 +1,6 @@
-# Create React App with Mentor's favorite extensions
+# Vite react boilerplate
 
-This project extends [Create React App](https://github.com/facebook/create-react-app).
+This project extends [Vite](https://vitejs.dev/) with offline PWA defaults.
 
 Added technologies:
 
