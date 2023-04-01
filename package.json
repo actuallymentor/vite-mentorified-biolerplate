@@ -11,6 +11,7 @@
   },
   "scripts": {
     "start": "vite",
+    "preview": "vite preview",
     "start:functions": "cd functions && npm run serve",
     "build": "vite build",
     "cypress:open": "NODE_ENV=development $(npm bin)/cypress open --e2e --browser chrome",

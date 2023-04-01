@@ -5,20 +5,23 @@ import { VitePWA } from 'vite-plugin-pwa'
 // PWA Config
 // requirements: https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements.html
 const pwa = env => VitePWA( {
+
     // https://vite-pwa-org.netlify.app/guide/service-worker-strategies-and-behaviors.html
     registerType: 'autoUpdate',
 
     // https://vite-pwa-org.netlify.app/guide/service-worker-precache.html#precache-manifest
     workbox: {
-        globPatterns: [ '**/*.{js,css,html,ico,png,svg}' ]
+        globPatterns: [ '**/*.{js,css,html,ico,png,svg,jsx}' ]
     },
 
     // https://vite-pwa-org.netlify.app/guide/#configuring-vite-plugin-pwa
     devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module'
     },
 
-    // Assets to include https://vite-pwa-org.netlify.app/guide/static-assets.html#static-assets-handling
+    // Assets to include (that are not under `manifest`) https://vite-pwa-org.netlify.app/guide/static-assets.html#static-assets-handling
+    // for favicon: https://realfavicongenerator.net/
     includeAssets: [ 'favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg' ],
 
     // PWA Manifest
@@ -26,7 +29,7 @@ const pwa = env => VitePWA( {
         name: env.VITE_app_name,
         short_name: env.VITE_short_app_name,
         description: env.VITE_app_description,
-        theme_color: '#ffffff',
+        theme_color: env.VITE_theme_base_color,
         icons: [
             {
                 src: 'logo192.png',
