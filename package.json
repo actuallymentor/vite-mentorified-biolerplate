@@ -36,6 +36,7 @@
     "npm-check-updates": "^16.7.9",
     "start-server-and-test": "^1.15.4",
     "vite": "^4.2.1",
-    "vite-plugin-pwa": "^0.14.7"
+    "vite-plugin-pwa": "^0.14.7",
+    "vite-plugin-svgr": "^3.2.0"
   }
 }

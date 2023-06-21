@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+import svgr from "vite-plugin-svgr"
 import { VitePWA } from 'vite-plugin-pwa'
 
 // PWA Config
@@ -51,6 +52,6 @@ export default defineConfig( ( { command, mode } ) => {
         build: {
             outDir: 'build'
         },
-        plugins: [ react(), pwa( loadEnv( mode, process.cwd(), '' ) ) ],
+        plugins: [ react(), svgr(), pwa( loadEnv( mode, process.cwd(), '' ) ) ],
     }
 } )
