@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "firebase": "^9.17.1",
+    "firebase": "^10.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.1",
-    "styled-components": "^5.3.6"
+    "react-router-dom": "^6.15.0",
+    "styled-components": "^6.0.7"
   },
   "scripts": {
     "start": "vite",
@@ -22,21 +22,22 @@
     "test:ci:with_emulator": "NODE_ENV=production server-test 'start' 3000 'start:functions' 4000 'cypress:run'",
     "prepare": "husky install",
     "lint": "eslint --fix src",
-    "upgrade": "npx update-browserslist-db@latest && ncu && npm list outdated"
+    "upgrade:browserlist": "npx browserslist@latest --update-db",
+    "upgrade": "npm run upgrade:browserlist && ncu && read -p 'Press enter to upgrade above packages' && ncu -u && read -p 'Press enter to install new versions...' && npm i && npm outdated"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.19.1",
-    "@babel/preset-react": "^7.18.6",
-    "@poap/skunk-linter": "^0.0.2",
-    "@vitejs/plugin-react": "^3.1.0",
-    "cypress": "^12.6.0",
-    "eslint": "^8.34.0",
-    "eslint-plugin-react": "^7.32.2",
+    "@babel/eslint-parser": "^7.22.11",
+    "@babel/preset-react": "^7.22.5",
+    "@poap/skunk-linter": "^0.0.3",
+    "@vitejs/plugin-react": "^4.0.4",
+    "cypress": "^13.0.0",
+    "eslint": "^8.48.0",
+    "eslint-plugin-react": "^7.33.2",
     "husky": "^8.0.3",
-    "npm-check-updates": "^16.7.9",
-    "start-server-and-test": "^1.15.4",
-    "vite": "^4.2.1",
-    "vite-plugin-pwa": "^0.14.7",
+    "npm-check-updates": "^16.13.2",
+    "start-server-and-test": "^2.0.0",
+    "vite": "^4.4.9",
+    "vite-plugin-pwa": "^0.16.4",
     "vite-plugin-svgr": "^3.2.0"
   }
 }

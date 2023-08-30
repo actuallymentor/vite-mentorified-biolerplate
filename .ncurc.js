@@ -4,7 +4,7 @@
 // /////////////////////////////*/
 module.exports = {
     upgrade: true,
-    target: 'minor',
+    // target: 'minor',
     // Which test to run between every upgrade
     doctor: false,
     doctorTest: 'npm run test:ci:with_emulator',
