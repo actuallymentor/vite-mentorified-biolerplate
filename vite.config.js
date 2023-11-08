@@ -12,7 +12,8 @@ const pwa = env => VitePWA( {
 
     // https://vite-pwa-org.netlify.app/guide/service-worker-precache.html#precache-manifest
     workbox: {
-        globPatterns: [ '**/*.{js,css,html,ico,png,svg,jsx}' ]
+        globPatterns: [ '**/*.{js,css,html,ico,png,svg,jsx}' ],
+        sourcemap: true,
     },
 
     // https://vite-pwa-org.netlify.app/guide/#configuring-vite-plugin-pwa
