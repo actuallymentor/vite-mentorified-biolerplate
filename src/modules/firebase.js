@@ -12,7 +12,7 @@ import { log, dev } from './helpers'
 // ///////////////////////////////
 
 // Firebase config
-const { VITE_apiKey, VITE_authDomain, VITE_projectId, VITE_storageBucket, VITE_messagingSenderId, VITE_appId, VITE_measurementId, VITE_recaptcha_site_key, VITE_APPCHECK_DEBUG_TOKEN } = process.env
+const { VITE_apiKey, VITE_authDomain, VITE_projectId, VITE_storageBucket, VITE_messagingSenderId, VITE_appId, VITE_measurementId, VITE_recaptcha_site_key, VITE_APPCHECK_DEBUG_TOKEN } = import.meta.env
 const config = {
     apiKey: VITE_apiKey,
     authDomain: VITE_authDomain,
