@@ -2,18 +2,21 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from "vite-plugin-svgr"
 import { VitePWA } from 'vite-plugin-pwa'
+import mkcert from 'vite-plugin-mkcert'
 
 // PWA Config
 // requirements: https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements.html
 const pwa = env => VitePWA( {
 
     // https://vite-pwa-org.netlify.app/guide/service-worker-strategies-and-behaviors.html
+    // remember to (in index.jsx) add import { registerSW } from 'virtual:pwa-register' \n registerSW({ immediate: true })
     registerType: 'autoUpdate',
 
     // https://vite-pwa-org.netlify.app/guide/service-worker-precache.html#precache-manifest
     workbox: {
         globPatterns: [ '**/*.{js,css,html,ico,png,svg,jsx}' ],
         sourcemap: true,
+        skipWaiting: true,
     },
 
     // https://vite-pwa-org.netlify.app/guide/#configuring-vite-plugin-pwa
@@ -53,6 +56,7 @@ export default defineConfig( ( { command, mode } ) => {
         build: {
             outDir: 'build'
         },
-        plugins: [ react(), svgr(), pwa( loadEnv( mode, process.cwd(), '' ) ) ],
+        server: { https: true },
+        plugins: [ mkcert(), react(), svgr(), pwa( loadEnv( mode, process.cwd(), '' ) ) ],
     }
 } )

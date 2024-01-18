@@ -10,7 +10,7 @@
 		"typescriptreact"
 	],
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": true
+		"source.fixAll.eslint": "explicit"
 	},
 	"editor.renderWhitespace": "all",
 	"editor.formatOnSave": true,
@@ -18,7 +18,7 @@
 	"eslint.run": "onType",
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.patterns": {
-		"vite.config.js": "*.js,.babelrc,.nvmrc,index.html,.gitignore",
+		"vite.config.js": "*.js,*.mjs,*.cjs,.babelrc,.nvmrc,index.html,.gitignore",
 		".env": ".env*,.*.json",
 		"firebase.json": "fire*,.fire*",
 		"package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml"
