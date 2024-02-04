@@ -7,3 +7,14 @@ Added technologies:
 - Styled components
 - React Router
 - Firebase
+
+## Firebase setup
+
+- [] create project
+- [] enable firestore, storage, hosting, functions, auth as needed
+- [] Github actions service account needs:
+    -[] Cloud Functions Admin
+    -[] Cloud Scheduler Admin
+    -[] Editor
+    -[] Firebase Hosting Admin
+    -[] Service Account User

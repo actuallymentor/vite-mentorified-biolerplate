@@ -8,7 +8,7 @@ const reduce_memory_declarations = ( acc, memory ) => ( { ...acc, [ `memory_${ m
  * @property {string} long_timeout - Set long timeout to function
  * @property {string} keep_warm - Keep function warm
  */
-exports.v1_runtimes = {
+export const v1_runtimes = {
     // As per https://firebase.google.com/docs/reference/functions/firebase-functions.md#valid_memory_options
     ...[ "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB" ].reduce( reduce_memory_declarations, {} ),
     long_timeout: { timeoutSeconds: 540 },
@@ -24,7 +24,7 @@ exports.v1_runtimes = {
  * @property {string} keep_warm - Keep function warm with min instances
  * @property {string} max_concurrency - Set max concurrency
  */
-exports.v2_runtimes = {
+export const v2_runtimes = {
     protected: { enforceAppCheck: true },
     long_timeout: { timeoutSeconds: 540 },
     // As per https://firebase.google.com/docs/reference/functions/2nd-gen/node/firebase-functions.md#memoryoption
@@ -40,7 +40,7 @@ exports.v2_runtimes = {
  * @param {boolean} throw_on_fail - throw an error if validation fails
  * @returns {boolean} - true if validation passes, false if validation fails and throw_on_fail is false
  */
-exports.validate_runtime_settings = ( runtimes, allowed_runtimes, throw_on_fail=true ) => {
+export const validate_runtime_settings = ( runtimes, allowed_runtimes, throw_on_fail=true ) => {
 
     // const { log } = require( '../modules/helpers' )
     // log( `Validating runtime settings against allowed rintimes: `, runtimes, allowed_runtimes )

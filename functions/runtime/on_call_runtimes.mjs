@@ -1,5 +1,7 @@
-// Impport dev and log helpers
-const { log } = require( '../modules/helpers' )
+import functions from 'firebase-functions'
+import { onCall } from 'firebase-functions/v2/https'
+import { v2_runtimes, v1_runtimes, validate_runtime_settings } from './runtimes_settings.mjs'
+import { log } from '../modules/helpers.mjs'
 const debug = false
 
 /**
@@ -8,12 +10,9 @@ const debug = false
  * @param {Function} handler - Function to run
  * @returns {Function} - Firebase function 
 */
-exports.v1_oncall = ( runtimes=[], handler ) => {
+export const v1_oncall = ( runtimes=[], handler ) => {
 
     if( debug ) log( `Creating handler with: `, typeof runtimes, runtimes, typeof handler, handler )
-
-    const functions = require( "firebase-functions" )
-    const { v1_runtimes, validate_runtime_settings } = require( './runtimes_settings' )
 
     // If the first parameter was a function, return the undecorated handler
     if( typeof runtimes === 'function' ) {
@@ -36,12 +35,9 @@ exports.v1_oncall = ( runtimes=[], handler ) => {
  * @param {Function} handler - Firebase function handler
  * @returns {Function} - Firebase function
  */
-exports.v2_oncall = ( runtimes=[], handler ) => {
+export const v2_oncall = ( runtimes=[], handler ) => {
 
     if( debug ) log( `Creating handler with: `, typeof runtimes, runtimes, typeof handler, handler )
-
-    const { onCall } = require( "firebase-functions/v2/https" )
-    const { v2_runtimes, validate_runtime_settings } = require( './runtimes_settings' )
 
     // If the first parameter was a function, return the handler as 'protected' firebase oncall
     if( typeof runtimes === 'function' ) {

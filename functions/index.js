@@ -1,17 +1,13 @@
-const functions = require( "firebase-functions" )
-const { log } = require( './modules/helpers' )
-const { throw_if_invalid_context } = require( './modules/firebase' )
+import { log } from './modules/helpers.mjs'
+import { throw_if_invalid_context } from './modules/firebase.mjs'
+import { v2_oncall } from './runtime/on_call_runtimes.mjs'
 
-exports.do_a_thing = functions.https.onCall( async ( data, context ) => {
 
+export const do_a_thing = v2_oncall( async () => {
     try {
-
-        throw_if_invalid_context( context )
         return { success: true }
-
     } catch ( e ) {
         log( `upload_file_to_web3 error: `, e )
         return { error: e.message }
     }
-
 } )

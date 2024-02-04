@@ -1,13 +1,14 @@
+import functions from 'firebase-functions'
+import { onRequest } from 'firebase-functions/v2/https'
+import { v2_runtimes, v1_runtimes, validate_runtime_settings } from './runtimes_settings.mjs'
+
 /**
  * Return a V1 onRequest with runtimes. NOTE: v1 appcheck is enforced through code and not config
  * @param {Array.<"high_memory"|"long_timeout"|"keep_warm">} [runtimes] - Array of runtime keys to use
  * @param {Function} handler - Function to run
  * @returns {Function} - Firebase function 
 */
-exports.v1_onrequest = ( runtimes=[], handler ) => {
-
-    const functions = require( "firebase-functions" )
-    const { v1_runtimes, validate_runtime_settings } = require( './runtimes_settings' )
+export const v1_onrequest = ( runtimes=[], handler ) => {
 
     // If the first parameter was a function, return the undecorated handler
     if( typeof runtimes === 'function' ) return functions.https.onRequest( runtimes )
@@ -26,10 +27,8 @@ exports.v1_onrequest = ( runtimes=[], handler ) => {
  * @param {Function} handler - Firebase function handler
  * @returns {Function} - Firebase function
  */
-exports.v2_onrequest = ( runtimes=[], handler ) => {
+export const v2_onrequest = ( runtimes=[], handler ) => {
 
-    const { onRequest } = require( "firebase-functions/v2/https" )
-    const { v2_runtimes, validate_runtime_settings } = require( './runtimes_settings' )
     const runtime_basis = { cors: true }
 
     // If the first parameter was a function, return the handler as 'protected' firebase oncall
