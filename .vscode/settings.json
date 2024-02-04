@@ -21,6 +21,7 @@
 		"vite.config.js": "*.js,*.mjs,*.cjs,.babelrc,.nvmrc,index.html,.gitignore",
 		".env": ".env*,.*.json",
 		"firebase.json": "fire*,.fire*",
-		"package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml"
+		"package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml",
+		"README.md": "CHANGELOG.md,CONTRIBUTING.md,CONTRIBUTORS.md,SECURITY.md,.notes.md",
 	}
 }

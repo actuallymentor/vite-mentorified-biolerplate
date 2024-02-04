@@ -13,8 +13,9 @@ Added technologies:
 - [] create project
 - [] enable firestore, storage, hosting, functions, auth as needed
 - [] Github actions service account needs:
-    -[] Cloud Functions Admin
-    -[] Cloud Scheduler Admin
-    -[] Editor
-    -[] Firebase Hosting Admin
-    -[] Service Account User
+    - [] Cloud Functions Admin
+    - [] Cloud Scheduler Admin
+    - [] Editor
+    - [] Firebase Hosting Admin
+    - [] Service Account User
+    - [] [permission docs](https://github.com/w9jds/firebase-action/tree/master/?tab=readme-ov-file#environment-variables)
