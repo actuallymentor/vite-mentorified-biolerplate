@@ -28,7 +28,7 @@ module.exports = defineConfig( {
 
 		require('dotenv').config( dotenvConfig )
 
-		config.env.REACT_APP_publicUrl = process.env.REACT_APP_publicUrl
+		config.env.VITE_publicUrl = process.env.VITE_publicUrl
 		return config
 	
 

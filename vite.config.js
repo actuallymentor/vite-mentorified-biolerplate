@@ -57,6 +57,6 @@ export default defineConfig( ( { command, mode } ) => {
             outDir: 'build'
         },
         server: { https: true },
-        plugins: [ mkcert(), react(), svgr(), pwa( loadEnv( mode, process.cwd(), '' ) ) ],
+        plugins: [ mkcert(), react(), svgr(), /* pwa( loadEnv( mode, process.cwd(), '' ) ) */ ],
     }
 } )

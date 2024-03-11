@@ -1,18 +1,19 @@
 // Firebase functionality
 import { initializeApp } from "firebase/app"
-import { getFirestore, collection, setDoc, doc, onSnapshot, query, where, limit, orderBy } from "firebase/firestore"
+import { getFirestore, collection as firestore_collection, setDoc, doc, onSnapshot, query, where, limit, orderBy, connectFirestoreEmulator } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
-import { log, dev } from './helpers'
+import { log, dev, verbose, localhost } from './helpers'
+import { connectAuthEmulator, getAuth } from "firebase/auth"
 
 // ///////////////////////////////
 // Initialisation
 // ///////////////////////////////
 
 // Firebase config
-const { VITE_apiKey, VITE_authDomain, VITE_projectId, VITE_storageBucket, VITE_messagingSenderId, VITE_appId, VITE_measurementId, VITE_recaptcha_site_key, VITE_APPCHECK_DEBUG_TOKEN } = import.meta.env
+const { VITE_apiKey, VITE_authDomain, VITE_projectId, VITE_storageBucket, VITE_messagingSenderId, VITE_appId, VITE_measurementId, VITE_recaptcha_site_key, VITE_APPCHECK_DEBUG_TOKEN, VITE_useEmulator } = import.meta.env
 const config = {
     apiKey: VITE_apiKey,
     authDomain: VITE_authDomain,
@@ -23,60 +24,104 @@ const config = {
     measurementId: VITE_measurementId
 }
 
-log( 'Init firebase with ', config )
+verbose( 'Init firebase with ', config )
 
 // Init app components
 const app = initializeApp( config )
 const analytics = getAnalytics( app )
-const db = getFirestore( app )
+export const db = getFirestore( app )
 const functions = getFunctions( app )
+export const auth = getAuth( app )
 
 // App check config
-// if( process.env.NODE_ENV === 'development' || VITE_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
-// log( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
-// const appcheck = initializeAppCheck( app, {
-// 	provider: new ReCaptchaV3Provider( VITE_recaptcha_site_key ),
-// 	isTokenAutoRefreshEnabled: true
-// } )
+if( import.meta.env.NODE_ENV === 'development' || VITE_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
+verbose( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
+const appcheck = localhost ? 'disabled ' : initializeAppCheck( app, {
+    provider: new ReCaptchaV3Provider( VITE_recaptcha_site_key ),
+    isTokenAutoRefreshEnabled: true
+} )
 
 // Remote functions
-// const function_name = httpsCallable( functions, 'function_name' )
+export const function_name = httpsCallable( functions, 'function_name' )
 
 
-// Offline functions emulator
-// Connect to functions emulator
-if( process.env.VITE_useEmulator ) {
-    connectFunctionsEmulator( functions, 'localhost', 5001 )
-    log( `Using firebase functions emulator` )
+// Connect to emulators is in dev
+const emulator_host = '127.0.0.1' || 'localhost'
+const ports = { functions: 5001, firestore: 8080, auth: 9099 }
+if( VITE_useEmulator ) {
+    log( `🤡 Using firebase emulators` )
+    connectFunctionsEmulator( functions, emulator_host, ports.functions )
+    connectFirestoreEmulator( db, emulator_host, ports.firestore )
+    connectAuthEmulator( auth, `http://${ emulator_host }:${ ports.auth }` )
 }
+export const get_emulator_function_call_url = name => `http://${ emulator_host }:${ ports.functions }/${ VITE_projectId }/us-central1/${ name }`
+
 
 
 /**
-* Listen to a firestore document path
-* @param {String} collection - The name of the collection
-* @param {String} document - The path of the document within the given collection
-* @param {Function} callback - The callback that receives the changed value of the document
-* @returns {Function} Unsubscribe listener 
-*/
-export function listen_to_document( collection, document, callback ) {
+ * Listens to changes in a specific document in a collection and invokes a callback function with the updated data.
+ * @param {Object} options - The options for listening to the document.
+ * @param {string} options.collection - The name of the collection.
+ * @param {string} options.document - The ID of the document.
+ * @param {Function} options.callback - The callback function to be invoked with the updated data.
+ * @returns {function} - The unsubscribe function to stop listening to the document changes.
+ */
+export function listen_to_document( { collection, document, callback } ) {
 
     const d = doc( db, collection, document )
 
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        log( `Retreived document ${ collection }/${ document }: `, data )
+        verbose( `Retreived document ${ collection }/${ document }: `, data )
         callback( data )
 
     } )
 
 }
 
+/**
+ * Writes a document to a Firestore collection.
+ * 
+ * @param {Object} options - The options for writing the document.
+ * @param {string} options.collection - The name of the collection to write the document to.
+ * @param {string} options.document - The ID of the document to write. If not provided, a new document will be created.
+ * @param {Object} options.data - The data to be written to the document.
+ * @param {boolean} [options.add_timestamp=true] - Whether to add timestamp fields to the data. Default is true.
+ * @param {boolean} [options.merge=true] - Whether to merge the data with existing document fields. Default is true.
+ * @returns {Promise<Object>} - A promise that resolves to a document reference in the format { id: 'document_id' }.
+ */
+export async function write_document( { collection, document, data, add_timestamp=true, merge=true } ) {
+
+    // Create a document reference. If no document is passed, a new one will be created
+    let doc_reference = undefined
+    if( document ) doc_reference = doc( db, collection, document )
+    else doc_reference = doc( firestore_collection( db, collection ) )
+
+    // Add timestamp fields
+    if( add_timestamp ) {
+        data.updated = Date.now()
+        data.updated_human = new Date().toString()
+    }
+
+    // If this is a document creation, add the created timestamp
+    if( !document ) {
+        data.created = Date.now()
+        data.created_human = new Date().toString()
+    }
+
+    // Returnd a document reference, returns the format { id: 'document_id' }
+    const written_reference = await setDoc( doc_reference, data, { merge } ) || {}
+    return { id: written_reference?.id || doc_reference?.id }
+
+}
+
+
 // ///////////////////////////////
 // Analytics actions
 // ///////////////////////////////
 export function track_event( name ) {
     if( !name ) return
-    if( process.env.NODE_ENV == 'development' ) return log( 'Dummy analytics event: ', name )
+    if( import.meta.env.NODE_ENV == 'development' ) return verbose( 'Dummy analytics event: ', name )
     logEvent( analytics, name )
 }
