@@ -5,21 +5,27 @@ import { log } from '../../modules/helpers'
 const theme = {
     colors: {
         primary: 'black',
+        error: 'red',
+        success: 'green',
         text: 'black',
         accent: 'orange',
         hint: 'grey',
         backdrop: 'rgba( 0, 0, 0, .05 )'
-    }
+    },
+    shadow: '0 0 2px 2px rgba( 0, 0, 0, .2 )'
 }
 
 const theme_dark = {
     colors: {
         primary: 'white',
+        error: 'red',
+        success: 'green',
         text: 'white',
         accent: 'orange',
         hint: 'lightgrey',
         backdrop: 'rgba( 0, 0, 0, .9 )'
-    }
+    },
+    shadow: '0 0 2px 2px rgba( 255, 255, 255, .2 )'
 }
 
 export default props => {

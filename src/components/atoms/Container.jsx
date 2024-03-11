@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { passable_props } from '../component_base'
 
 export default styled.div`
 	position: relative;
@@ -6,13 +7,16 @@ export default styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	min-height: 100vh;
 	width: 100%;
-	padding:  0 max( 1rem, calc( 25vw - 8rem ) );
 	box-sizing: border-box;
 	background-color: ${ ( { theme } ) => theme.colors.backdrop };
 	& * {
 		box-sizing: border-box;
 	}
+
+	// Implement generic passable props
+	${ props => passable_props( props ) }
+
 `

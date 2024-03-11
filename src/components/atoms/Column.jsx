@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { passable_props } from '../component_base'
 
 export default styled.section`
 	padding: .5rem;
@@ -10,4 +11,5 @@ export default styled.section`
 	flex-wrap: wrap;
 	align-items: ${ ( { align } ) => align || 'flex-start' };
 	justify-content: ${ ( { justify } ) => justify || 'center' };
+	${ props => passable_props( props ) }
 `
