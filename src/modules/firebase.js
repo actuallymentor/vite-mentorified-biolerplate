@@ -1,11 +1,11 @@
 // Firebase functionality
 import { initializeApp } from "firebase/app"
-import { getFirestore, collection as firestore_collection, setDoc, doc, onSnapshot, query, where, limit, orderBy, connectFirestoreEmulator } from "firebase/firestore"
+import { getFirestore, collection as firestore_collection, setDoc, doc, onSnapshot, connectFirestoreEmulator } from "firebase/firestore"
 import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
-import { log, dev, verbose, localhost } from './helpers'
+import { log, verbose, localhost } from './helpers'
 import { connectAuthEmulator, getAuth } from "firebase/auth"
 
 // ///////////////////////////////

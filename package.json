@@ -1,5 +1,5 @@
 {
-  "name": "react-firebase-template",
+  "name": "vite-mentorified-boilerplate",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -24,19 +24,21 @@
     "test:production": "npm run build && NODE_ENV=production server-test 'serve build' 3000 'cypress:open'",
     "test:ci": "NODE_ENV=production CI=true server-test 'start' 3000 'cypress:run'",
     "test:ci:with_emulator": "NODE_ENV=production server-test 'start' 3000 'start:functions' 4000 'cypress:run'",
-    "prepare": "husky",
     "lint": "eslint --fix src",
     "upgrade:browserlist": "npx browserslist@latest --update-db",
-    "upgrade": "npm run upgrade:browserlist && ncu && read -p 'Press enter to upgrade above packages' && ncu -u && read -p 'Press enter to install new versions...' && npm i && npm outdated"
+    "upgrade": "npm run upgrade:browserlist && ncu && read -p 'Press enter to upgrade above packages' && ncu -u && read -p 'Press enter to install new versions...' && npm i && npm outdated",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.24.1",
     "@babel/preset-react": "^7.24.1",
     "@poap/skunk-linter": "^0.0.3",
     "@vitejs/plugin-react": "^4.2.1",
+    "airier": "^0.0.8",
     "cypress": "^13.7.2",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-unused-imports": "^3.1.0",
     "husky": "^9.0.11",
     "npm-check-updates": "^16.14.18",
     "start-server-and-test": "^2.0.3",

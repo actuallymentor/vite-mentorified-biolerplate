@@ -3,7 +3,7 @@
 // docs: https://www.npmjs.com/package/npm-check-updates
 // /////////////////////////////*/
 module.exports = {
-    upgrade: true,
+    upgrade: false,
     // target: 'minor',
     // Which test to run between every upgrade
     doctor: false,

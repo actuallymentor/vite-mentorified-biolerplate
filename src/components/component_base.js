@@ -1,4 +1,3 @@
-import { log } from "../modules/helpers"
 
 export const passable_props = props => {
 
