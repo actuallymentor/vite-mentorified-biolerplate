@@ -1,13 +1,12 @@
 import styled from 'styled-components'
+import { passable_props } from '../component_base'
 
 export default styled.main`
-	flex-grow: 1;
-	width: 100%;
 	display: flex;
-	flex-direction: ${ ( { direction } ) => direction || 'column' };
-	width: ${ ( { width } ) => width || '100%' };
+	flex-grow: 1;
 	max-width: 100%;
 	flex-wrap: wrap;
-	align-items: ${ ( { align } ) => align || 'center' };
-	justify-content: ${ ( { justify } ) => justify || 'center' };
+	padding: 0 2rem;
+	${ passable_props };
+
 `

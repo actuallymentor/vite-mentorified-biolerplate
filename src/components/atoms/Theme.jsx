@@ -2,30 +2,46 @@ import React, { useEffect, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { log } from '../../modules/helpers'
 
+const shared_colors = {
+    accent: 'lightgreen',
+    success: 'green',
+    error: 'red',
+    shadow: {
+        light: 'rgba( 0, 0, 0, .2 )',
+        dark: 'rgba( 255, 255, 255, .4 )'
+    }
+}
+
 const theme = {
     colors: {
         primary: 'black',
-        error: 'red',
-        success: 'green',
         text: 'black',
-        accent: 'orange',
         hint: 'grey',
-        backdrop: 'rgba( 0, 0, 0, .05 )'
+        backdrop: 'white',
+        ...shared_colors
     },
-    shadow: '0 0 2px 2px rgba( 0, 0, 0, .2 )'
+    shadows: {
+        0: `0 0 5px 0px ${ shared_colors.shadow.light }`,
+        1: `0 0 10px 1px ${ shared_colors.shadow.light }`,
+        2: `0 0 10px 5px ${ shared_colors.shadow.light }`,
+        color: shared_colors.shadow.light
+    }
 }
 
 const theme_dark = {
     colors: {
         primary: 'white',
-        error: 'red',
-        success: 'green',
         text: 'white',
-        accent: 'orange',
         hint: 'lightgrey',
-        backdrop: 'rgba( 0, 0, 0, .9 )'
+        backdrop: '#000000',
+        ...shared_colors
     },
-    shadow: '0 0 2px 2px rgba( 255, 255, 255, .2 )'
+    shadows: {
+        0: `0 0 10px 2px ${ shared_colors.shadow.dark }`,
+        1: `0 0 10px 5px ${ shared_colors.shadow.dark }`,
+        2: `0 0 10px 10px ${ shared_colors.shadow.dark }`,
+        color: shared_colors.shadow.dark
+    }
 }
 
 export default props => {

@@ -13,16 +13,17 @@ const A = styled.a`
 	&[disabled] {
 		opacity: 0.5;
 	}
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
 
-export default ( { href, navigate, ...props } ) => {
+export default ( { href, navigate, new_tab=false, ...props } ) => {
 
     const navigate_to = useNavigate()
 
     function handle_navigate() {
         if( navigate ) navigate_to( navigate )
-        if( href ) window.open( href, '_blank' ).focus()
+        if( href && new_tab ) window.open( href, '_blank' ).focus()
+        if( href && !new_tab ) window.open( href, '_self' )
     }
 
     return <A onClick={ handle_navigate } { ...props }/>

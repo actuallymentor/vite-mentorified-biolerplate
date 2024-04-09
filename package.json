@@ -5,11 +5,13 @@
   "private": true,
   "dependencies": {
     "dotenv": "^16.4.5",
-    "firebase": "^10.8.1",
+    "firebase": "^10.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
-    "styled-components": "^6.1.8"
+    "react-toastify": "^10.0.5",
+    "styled-components": "^6.1.8",
+    "use-interval": "^1.4.0"
   },
   "scripts": {
     "start": "NODE_ENV=development vite",
@@ -28,19 +30,19 @@
     "upgrade": "npm run upgrade:browserlist && ncu && read -p 'Press enter to upgrade above packages' && ncu -u && read -p 'Press enter to install new versions...' && npm i && npm outdated"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.23.10",
-    "@babel/preset-react": "^7.23.3",
+    "@babel/eslint-parser": "^7.24.1",
+    "@babel/preset-react": "^7.24.1",
     "@poap/skunk-linter": "^0.0.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "cypress": "^13.6.6",
+    "cypress": "^13.7.2",
     "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react": "^7.34.1",
     "husky": "^9.0.11",
-    "npm-check-updates": "^16.14.15",
+    "npm-check-updates": "^16.14.18",
     "start-server-and-test": "^2.0.3",
-    "vite": "^5.1.5",
-    "vite-plugin-mkcert": "^1.17.4",
-    "vite-plugin-pwa": "^0.19.2",
+    "vite": "^5.2.8",
+    "vite-plugin-mkcert": "^1.17.5",
+    "vite-plugin-pwa": "^0.19.8",
     "vite-plugin-svgr": "^4.2.0"
   }
 }

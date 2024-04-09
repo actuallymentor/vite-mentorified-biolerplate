@@ -6,35 +6,48 @@ import Footer from '../molecules/Footer'
 const Wrapper = styled.div`
 	position: relative;
 	overflow: hidden;
+	background: ${ ( { theme } ) => theme.colors.backdrop };
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
 	min-height: 100vh;
-	min-height: 100dvh;
 	width: 100%;
 	box-sizing: border-box;
-	background-color: ${ ( { theme } ) => theme.colors.backdrop };
-	padding-bottom: ${ ( { footer } ) => footer ? '0' : '4rem' };
+
+	main {
+
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		flex: 1;
+		min-height: 100%;
+		max-width: 100%;
+
+		// Implement generic passable props
+		${ passable_props };
+
+	}
+
+	// Implement generic passable props
+	${ passable_props };
+
 	& * {
 		box-sizing: border-box;
 		max-width: 100%;
 	}
-
-	// Implement generic passable props
-	${ props => passable_props( props ) }
-
 `
 
-export default function Container( { menu=true, footer=true, children, ...props } ) {
+export default function Container( { menu=true, $footer=true, children, ...props } ) {
 
-    return <Wrapper { ...props } footer={ footer }>
+    return <Wrapper { ...props } $footer={ $footer }>
 
         { menu && <Menu /> }
 
-        { children }
+        <main>
+            { children }
+        </main>
 
-        { footer && <Footer /> }
+        { $footer && <Footer /> }
 
 
     </Wrapper>

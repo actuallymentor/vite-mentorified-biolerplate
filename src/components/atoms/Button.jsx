@@ -17,7 +17,7 @@ const Button = styled.a`
 			background: none;
 		`
         if( $variant == 'solid' ) return `
-			color: ${ theme.colors.background };
+			color: ${ theme.colors.backdrop };
 			border: 2px solid ${ theme.colors[ $color ] || $color };
 			background: ${ theme.colors[ $color ] || $color };
 		`
@@ -29,7 +29,7 @@ const Button = styled.a`
 	&[disabled] {
 		opacity: 0.5;
 	}
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
 
 export default ( { href, navigate, ...props } ) => {

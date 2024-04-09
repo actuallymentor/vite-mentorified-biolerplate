@@ -11,7 +11,7 @@ export const Text = styled.p`
 	background: ${ ( { background='initial' } ) => background };
 	display: flex;
 	font-style: ${ ( { $style='normal' } ) => $style };
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
 
 export const H1 = styled.h1`
@@ -22,7 +22,7 @@ export const H1 = styled.h1`
 	text-align: ${ ( { $align } ) => $align || 'left' };
 	color: ${ ( { theme, $color='primary' } ) => theme.colors[ $color ] || $color || theme.colors.text };
 	overflow-wrap: anywhere;
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
 
 export const H2 = styled.h2`
@@ -33,7 +33,7 @@ export const H2 = styled.h2`
 	text-align: ${ ( { $align } ) => $align || 'left' };
 	color: ${ ( { theme, $color='accent' } ) => theme.colors[ $color ] || $color || theme.colors.text };
 	overflow-wrap: anywhere;
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
 
 export const Sidenote = styled.p`
@@ -42,7 +42,7 @@ export const Sidenote = styled.p`
 	margin-top:  1rem;
 	text-align: center;
 	overflow-wrap: anywhere;
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
 
 export const Sup = styled.sup`

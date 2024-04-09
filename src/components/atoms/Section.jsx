@@ -11,7 +11,7 @@ export default styled.section`
 	max-width: 100%;
 	flex-wrap: wrap;
 	${ ( { $shadow, theme } ) => {
-        if( $shadow ) return `box-shadow: ${ theme.shadow }; background: ${ theme.colors.backdrop };`
+        if( $shadow ) return `box-shadow: ${ theme.shadows[1] }; background: ${ theme.colors.backdrop };`
     } }
-	${ props => passable_props( props ) }
+	${ passable_props };
 `

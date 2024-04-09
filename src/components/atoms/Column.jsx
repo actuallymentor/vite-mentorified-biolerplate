@@ -11,5 +11,5 @@ export default styled.section`
 	flex-wrap: wrap;
 	align-items: ${ ( { align } ) => align || 'flex-start' };
 	justify-content: ${ ( { justify } ) => justify || 'center' };
-	${ props => passable_props( props ) }
+	${ passable_props };
 `
