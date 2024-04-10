@@ -26,33 +26,66 @@ const config = {
 
 verbose( 'Init firebase with ', config )
 
-// Init app components
-const app = initializeApp( config )
-const analytics = getAnalytics( app )
-export const db = getFirestore( app )
-const functions = getFunctions( app )
-export const auth = getAuth( app )
+// Firebase app
+let app_cache = undefined
+const app = () => {
+    if( app_cache ) return app_cache
+    app_cache = initializeApp( config )
+    return app_cache
+}
+
+// Analytics
+let analytics_cache = undefined
+const analytics = () => {
+    if( analytics_cache ) return analytics_cache
+    analytics_cache = getAnalytics( app() )
+    return analytics_cache
+}
+
+// Firestore
+let db_cache = undefined
+export const db = () => {
+    if( db_cache ) return db_cache
+    db_cache = getFirestore( app() )
+    return db_cache
+
+}
+
+// Functions
+let functions_cache = undefined
+export const functions = () => {
+    if( functions_cache ) return functions_cache
+    functions_cache = getFunctions( app() )
+    return functions_cache
+}
+
+// Auth
+let auth_cache = undefined
+export const auth = () => {
+    if( auth_cache ) return auth_cache
+    auth_cache = getAuth( app() )
+    return auth_cache
+}
 
 // App check config
 if( import.meta.env.NODE_ENV === 'development' || VITE_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
 verbose( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
-const appcheck = localhost ? 'disabled ' : initializeAppCheck( app, {
+const appcheck = localhost ? 'disabled ' : initializeAppCheck( app(), {
     provider: new ReCaptchaV3Provider( VITE_recaptcha_site_key ),
     isTokenAutoRefreshEnabled: true
 } )
 
 // Remote functions
-export const function_name = httpsCallable( functions, 'function_name' )
-
+export const function_name = httpsCallable( functions(), 'function_name' )
 
 // Connect to emulators is in dev
 const emulator_host = '127.0.0.1' || 'localhost'
 const ports = { functions: 5001, firestore: 8080, auth: 9099 }
 if( VITE_useEmulator ) {
     log( `🤡 Using firebase emulators` )
-    connectFunctionsEmulator( functions, emulator_host, ports.functions )
-    connectFirestoreEmulator( db, emulator_host, ports.firestore )
-    connectAuthEmulator( auth, `http://${ emulator_host }:${ ports.auth }` )
+    connectFunctionsEmulator( functions(), emulator_host, ports.functions )
+    connectFirestoreEmulator( db(), emulator_host, ports.firestore )
+    connectAuthEmulator( auth(), `http://${ emulator_host }:${ ports.auth }` )
 }
 export const get_emulator_function_call_url = name => `http://${ emulator_host }:${ ports.functions }/${ VITE_projectId }/us-central1/${ name }`
 
@@ -68,7 +101,7 @@ export const get_emulator_function_call_url = name => `http://${ emulator_host }
  */
 export function listen_to_document( { collection, document, callback } ) {
 
-    const d = doc( db, collection, document )
+    const d = doc( db(), collection, document )
 
     return onSnapshot( d, snap => {
 
@@ -95,8 +128,8 @@ export async function write_document( { collection, document, data, add_timestam
 
     // Create a document reference. If no document is passed, a new one will be created
     let doc_reference = undefined
-    if( document ) doc_reference = doc( db, collection, document )
-    else doc_reference = doc( firestore_collection( db, collection ) )
+    if( document ) doc_reference = doc( db(), collection, document )
+    else doc_reference = doc( firestore_collection( db(), collection ) )
 
     // Add timestamp fields
     if( add_timestamp ) {
@@ -123,5 +156,5 @@ export async function write_document( { collection, document, data, add_timestam
 export function track_event( name ) {
     if( !name ) return
     if( import.meta.env.NODE_ENV == 'development' ) return verbose( 'Dummy analytics event: ', name )
-    logEvent( analytics, name )
+    logEvent( analytics(), name )
 }

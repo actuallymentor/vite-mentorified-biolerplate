@@ -3,12 +3,14 @@
   "description": "Cloud Functions for Firebase",
   "type": "module",
   "scripts": {
-    "serve": "NODE_ENV=development firebase emulators:start --only functions",
+    "serve": "NODE_ENV=development firebase emulators:start --import=./.emulator-data | tee functions-emulator.log",
+    "serve:clean": "NODE_ENV=development firebase emulators:start > functions-emulator.log",
+    "serve:with_export": "npm run serve -- --export-on-exit=./.emulator-data",
     "shell": "NODE_ENV=development firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "runtime": "firebase functions:config:get > .runtimeconfig.json"
+    "runtime": "which firebase"
   },
   "engines": {
     "node": "20"

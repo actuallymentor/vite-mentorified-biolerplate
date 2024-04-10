@@ -1,3 +1,5 @@
+import { dev } from "../modules/helpers.mjs"
+
 // Function to reduce an array of memory declarations to an object of memory declarations
 const reduce_memory_declarations = ( acc, memory ) => ( { ...acc, [ `memory_${ memory }` ]: { memory } } )
 
@@ -25,7 +27,7 @@ export const v1_runtimes = {
  * @property {string} max_concurrency - Set max concurrency
  */
 export const v2_runtimes = {
-    protected: { enforceAppCheck: true },
+    protected: { enforceAppCheck: !dev },
     long_timeout: { timeoutSeconds: 540 },
     // As per https://firebase.google.com/docs/reference/functions/2nd-gen/node/firebase-functions.md#memoryoption
     ...[ "128MiB", "256MiB", "512MiB", "1GiB", "2GiB", "4GiB", "8GiB", "16GiB", "32GiB" ].reduce( reduce_memory_declarations, {} ),

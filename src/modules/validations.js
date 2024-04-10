@@ -6,7 +6,5 @@ export const eth_address_regex = /(0x[a-f0-9]{40})/i
 export const ens_address_regex = /(.*\.[a-z]{2,63})/i
 export const eth_or_ens_address_regex = new RegExp( `(${ eth_address_regex.source })|(${ ens_address_regex.source })`, 'i' )
 
-
-/* ///////////////////////////////
-// Normalisations */
-export const normalise_string = address => `${ address }`.toLowerCase().trim()
+// Sanetise strings (generic)
+export const sanetise_string = string => `${ string }`.trim().toLowerCase()
