@@ -20,7 +20,7 @@ export const useQuery = ( key_to_set, default_value='' ) => {
     const [ current_value, set_current_value ] = useState( searchParams.get( key_to_set ) )
 
     // Listen to the localstorage to see if any other useQuery hooks have updated the url
-    const { updated } = useLocalStorage( `useQuery_${ key_to_set }`, {} )
+    const { updated } = useLocalStorage( { key: `useQuery_${ key_to_set }`, default_value: {} } )
     const touch_localstorage = () => set_item( `useQuery_${ key_to_set }`, { updated: Date.now() }, true )
 
     // setSearchParams with logging built in
