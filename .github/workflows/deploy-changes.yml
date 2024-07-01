@@ -36,30 +36,34 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
+
       - name: Install dependencies
         if: steps.changed-firebase-files.outputs.any_changed == 'true'
-        run: npm ci
+        run: npm ci --loglevel verbose
 
       #########
       # Deploy
-      - name: Deploy DEV meta to Firebase
-        uses: w9jds/firebase-action@master
+      - name: Set up DEV firebase
+        uses: w9jds/setup-firebase@main
         if: |
           github.ref == 'refs/heads/development' &&
           steps.changed-firebase-files.outputs.any_changed == 'true'
         with:
-          args: deploy --only=firestore --project=development
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
-      - name: Deploy PROD meta to Firebase
-        uses: w9jds/firebase-action@master
+          project_id: development
+          gcp_sa_key: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+
+      - name: Set up PROD firebase
+        uses: w9jds/setup-firebase@main
         if: |
-          github.ref == 'refs/heads/main' && 
+          github.ref == 'refs/heads/main' &&
           steps.changed-firebase-files.outputs.any_changed == 'true'
         with:
-          args: deploy --only=firestore --project=production
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+          project_id: production
+          gcp_sa_key: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+      - name: Deploy metadata
+        if: |
+          steps.changed-firebase-files.outputs.any_changed == 'true'
+        run: firebase deploy --only=firestore
 
   ## ###############
   ## 2️⃣ Deploy functions
@@ -94,7 +98,7 @@ jobs:
           cache: "npm"
       - name: Install functions dependencies
         if: steps.changed-functions-files.outputs.any_changed == 'true'
-        run: npm ci
+        run: npm ci --loglevel verbose
         working-directory: functions
 
       #####################
@@ -116,24 +120,27 @@ jobs:
 
       #########
       # Deploy
-      - name: Deploy DEV functions to Firebase
-        uses: w9jds/firebase-action@master
+      - name: Set up DEV firebase
+        uses: w9jds/setup-firebase@main
         if: |
           github.ref == 'refs/heads/development' &&
           steps.changed-functions-files.outputs.any_changed == 'true'
         with:
-          args: deploy --only=functions --project=development
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
-      - name: Deploy PROD functions to Firebase
-        uses: w9jds/firebase-action@master
+          project_id: development
+          gcp_sa_key: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+
+      - name: Set up PROD firebase
+        uses: w9jds/setup-firebase@main
         if: |
           github.ref == 'refs/heads/main' &&
           steps.changed-functions-files.outputs.any_changed == 'true'
         with:
-          args: deploy --only=functions --project=production
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+          project_id: production
+          gcp_sa_key: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
+      - name: Deploy functions
+        if: |
+          steps.changed-functions-files.outputs.any_changed == 'true'
+        run: firebase deploy --only functions
 
   ## ###############
   ## 3️⃣ Deploy frontend changes
@@ -167,9 +174,22 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
-      - name: Install dependencies
+
+      # Install dependencies with failover
+      - name: Install dependencies with cache
         if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: npm ci
+        id: depinstall
+        run: npm ci --loglevel verbose
+        continue-on-error: true
+      - name: Install dependencies without cache
+        if: steps.changed-frontend-files.outputs.any_changed == 'true' && steps.depinstall.outcome == 'failure'
+        run: npm install
+      - name: Install functions dependencies (needed for emulator)
+        if: steps.changed-frontend-files.outputs.any_changed == 'true'
+        run: npm ci --loglevel verbose
+        working-directory: functions
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+        id: setup-ffmpeg
 
       # Set up environment
       - name: Create DEV environment files
@@ -178,6 +198,7 @@ jobs:
           steps.changed-frontend-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > functions/.env.development
 
       - name: Create PROD environment files
         if: |
@@ -185,6 +206,26 @@ jobs:
           steps.changed-frontend-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
+          echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > functions/.env.production
+
+      # Set up firebase
+      - name: Set up DEV firebase
+        uses: w9jds/setup-firebase@main
+        if: |
+          github.ref == 'refs/heads/development' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        with:
+          project_id: development
+          gcp_sa_key: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+
+      - name: Set up PROD firebase
+        uses: w9jds/setup-firebase@main
+        if: |
+          github.ref == 'refs/heads/main' &&
+          steps.changed-frontend-files.outputs.any_changed == 'true'
+        with:
+          project_id: production
+          gcp_sa_key: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
 
       # Check linting
       - name: Check for linting errors
@@ -194,7 +235,12 @@ jobs:
       # Check CI
       - name: Run cypress tests
         if: steps.changed-frontend-files.outputs.any_changed == 'true'
-        run: npm run test:ci
+        env:
+          WAIT_ON_TIMEOUT: 30000
+          START_SERVER_AND_TEST_INSECURE: true
+          # DEBUG: start-server-and-test
+          CYPRESS_NODE_TLS_REJECT_UNAUTHORIZED: 0
+        run: npm run test:ci:with_emulator
 
       # If CI failed, upload the videos for debugging
       - name: Testing failed
@@ -203,6 +249,16 @@ jobs:
         with:
           name: cypress-videos
           path: cypress/videos
+
+      # Upload log files of this fun
+      - name: Upload all log files
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Logfiles
+          path: |
+            *.log
+            functions/*.log
 
       # Prep env for deployment
       - name: Remove debug token and dev settings from build
@@ -221,22 +277,7 @@ jobs:
         run: npm run build
 
       # Deploy frontend
-      - name: Deploy to PROD Firebase
-        uses: w9jds/firebase-action@master
+      - name: Deploy frontend
         if: |
-          github.ref == 'refs/heads/main' &&
           steps.changed-frontend-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only hosting,firestore --project=production
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_PRODUCTION }}
-
-      - name: Deploy to DEV Firebase
-        uses: w9jds/firebase-action@master
-        if: |
-          github.ref == 'refs/heads/development' &&
-          steps.changed-frontend-files.outputs.any_changed == 'true'
-        with:
-          args: deploy --only hosting,firestore --project=development
-        env:
-          GCP_SA_KEY: ${{ secrets.SERVICE_ACCOUNT_DEVELOPMENT }}
+        run: firebase deploy --only hosting
