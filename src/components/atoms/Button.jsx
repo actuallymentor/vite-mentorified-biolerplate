@@ -8,7 +8,7 @@ const Button = styled.a`
 	text-decoration: none;
 	border-radius: 5px;
 	border: 2px solid ${ ( { $color='accent', theme } ) => theme.colors[ $color ] || $color };
-
+	display: inline-block;
 
 	// Variants
 	${ ( { $color='accent', theme, $variant='solid' } ) => {

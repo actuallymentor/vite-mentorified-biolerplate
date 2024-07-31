@@ -106,6 +106,8 @@ jobs:
         run: |
           sed -i 's/^REACT_APP_useEmulator=.*$//g' .env
           sed -i 's/^REACT_APP_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+          sed -i 's/^VITE_APPCHECK_DEBUG_TOKEN=.*$//g' .env
+          sed -i 's/^VITE_useEmulator=.*$//g' .env
 
       # If all went well, build and generate a preview link
       - name: Build website files
