@@ -68,7 +68,7 @@ jobs:
           steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_DEVELOPMENT }}" > .env
-          echo -e "\nREACT_APP_useEmulator=true" >> .env
+          echo -e "\nVITE__useEmulator=true" >> .env
           echo -e "${{ secrets.FUNCTIONS_DOTENV_DEVELOPMENT }}" > functions/.env.development
           cd functions && npm run use:dev
 
@@ -78,7 +78,7 @@ jobs:
           steps.changed-files.outputs.any_changed == 'true'
         run: |
           echo -e "${{ secrets.DOTENV_PRODUCTION }}" > .env
-          echo -e "\nREACT_APP_useEmulator=true" >> .env
+          echo -e "\nVITE_useEmulator=true" >> .env
           echo -e "${{ secrets.FUNCTIONS_DOTENV_PRODUCTION }}" > functions/.env.production
           cd functions && npm run use:prod
 
@@ -91,6 +91,11 @@ jobs:
       - name: Run cypress tests
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npm run test:ci:with_emulator
+        env:
+          WAIT_ON_TIMEOUT: 30000
+          START_SERVER_AND_TEST_INSECURE: true
+          #DEBUG: start-server-and-test
+          CYPRESS_NODE_TLS_REJECT_UNAUTHORIZED: 0
 
       # If CI failed, upload the videos for debugging
       - name: If testing failed, upload video files
