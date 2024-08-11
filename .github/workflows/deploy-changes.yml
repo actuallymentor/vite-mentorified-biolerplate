@@ -190,6 +190,14 @@ jobs:
         working-directory: functions
       - uses: FedericoCarboni/setup-ffmpeg@v3
         id: setup-ffmpeg
+      - name: Cache firebase emulators
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-emulators-
+          save-always: true
 
       # Set up environment
       - name: Create DEV environment files

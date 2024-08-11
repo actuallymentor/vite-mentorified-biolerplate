@@ -44,6 +44,14 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npm ci
         working-directory: functions
+      - name: Cache firebase emulators
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-firebase-emulators-
+          save-always: true
 
       # Set up gcloud projects for functions
       - name: "Gcloud auth for DEV firebase"
