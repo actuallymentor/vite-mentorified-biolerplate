@@ -3,6 +3,8 @@ import { initializeApp } from "firebase-admin/app"
 import { getFirestore } from 'firebase-admin/firestore'
 import { getStorage } from 'firebase-admin/storage'
 import { getAuth } from 'firebase-admin/auth'
+import { log } from "mentie"
+
 
 // Cached app getter
 let app_cache = undefined
@@ -78,16 +80,21 @@ export const read_doc = async ( collection, document_id ) => {
 /**
  * Writes a document to a Firestore collection.
  * @param {Object} options - The options for writing the document.
- * @param {string} options.doc - The ID of the document to write.
- * @param {Object} options.content - The content of the document.
- * @param {boolean} [options.merge=true] - Whether to merge the new content with existing document or overwrite it.
- * @param {boolean} [options.timestamps=true] - Whether to add timestamp fields to the document.
- * @returns {Promise<void>} A promise that resolves when the document is successfully written.
+ * @param {string} options.collection - The name of the collection to write to.
+ * @param {string} options.doc - The ID of the document to write. If not provided, a new document will be created.
+ * @param {Object} options.content - The content of the document to write.
+ * @param {boolean} [options.merge=true] - Whether to merge the new content with existing document data. Defaults to true.
+ * @param {boolean} [options.timestamps=true] - Whether to include timestamp fields in the document. Defaults to true.
+ * @returns {Promise} - A promise that resolves when the document is successfully written.
  */
-export const write_doc = async ( { collection, doc, content, merge=true, timestamps=true } ) => {
+export async function write_doc ( { collection, doc, content, merge=true, timestamps=true } ) {
+
+    // Validations
+    if( !collection || !content ) log.error( `Missing required parameters for writing document: `, { collection, doc, content, arguments } )
 
     if( timestamps ) content = { ...content, updated: Date.now(), updated_human: new Date().toString() }
 
+    if( !doc ) return db().collection( collection ).add( content )
     return db().collection( collection ).doc( doc ).set( content, { merge } )
 
 }

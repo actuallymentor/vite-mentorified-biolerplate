@@ -56,7 +56,7 @@ export default defineConfig( ( { command, mode } ) => {
         build: {
             outDir: 'build'
         },
-        server: { https: true },
+        server: { https: true, host: '127.0.0.1', port: 3000 },
         plugins: [ mkcert(), react(), svgr(), /* pwa( loadEnv( mode, process.cwd(), '' ) ) */ ],
     }
 } )

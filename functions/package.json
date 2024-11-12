@@ -10,7 +10,10 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "runtime": "which firebase"
+    "runtime": "which firebase",
+    "redeploy": "mv index.js index.js.bak && touch index.js && npm run deploy && mv index.js.bak index.js && npm run deploy",
+    "use:dev": "firebase use development",
+    "use:prod": "firebase use production"
   },
   "engines": {
     "node": "20"
