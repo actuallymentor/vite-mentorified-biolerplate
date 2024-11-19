@@ -1,7 +1,7 @@
 import { Route, Routes as DOMRoutes } from "react-router-dom"
 import { Suspense } from "react"
-import Loading from "../components/molecules/Loading"
-import Toast from "../components/molecules/ToastContainer"
+import { LoadingOverlay } from '@mantine/core'
+
 
 // Statically loaded pages
 import Homepage from "../components/pages/Homepage"
@@ -11,9 +11,7 @@ import Homepage from "../components/pages/Homepage"
 
 export default function Routes() {
     
-    return <Suspense fallback={ <Loading delay="500" message='Loading' /> }>
-
-        <Toast />
+    return <Suspense fallback={ <LoadingOverlay visible={ true } zIndex={ 1000 } /> }>
         
         <DOMRoutes>
 
