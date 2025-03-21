@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useWidth } from '../../hooks/window'
 import Link from '../atoms/Link'
 
-const Menu = styled.nav`
+const MenuBase = styled.nav`
 
 	position: ${ ( { $mobile_open } ) => $mobile_open ? 'fixed' : 'relative' };
 	padding-left: inherit;
@@ -81,7 +81,7 @@ const Hamburger = ( { ...props } ) => <Burger className='menu_burger' { ...props
     <span />
 </Burger>
 
-export default ( { ...props } ) => {
+export default function Menu( { ...props } ) {
 
     const [ open, set_open ] = useState( false )
     const width = useWidth()
@@ -94,7 +94,7 @@ export default ( { ...props } ) => {
 
 
 
-    return <Menu $mobile_open={ open }>
+    return <MenuBase $mobile_open={ open }>
 	
         { use_burger && <Hamburger $mobile_open={ open } onClick={ f => set_open( !open ) } /> }
         { (  use_burger && open  || !use_burger ) && <>
@@ -102,6 +102,6 @@ export default ( { ...props } ) => {
             <Link navigate='/'>Home</Link>
         </> }
 
-    </Menu>
+    </MenuBase>
 
 }

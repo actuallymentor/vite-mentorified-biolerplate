@@ -11,5 +11,6 @@ module.exports = {
     reject: [
         '@rainbow-me/rainbowkit',
         'wagmi', // Upgrade wagmi only as details in @rainbow-me/rainbowkit docs: https://github.com/rainbow-me/rainbowkit/releases
+        'eslint' // version 9 changes a lot in a lot of annoying ways
     ]
 }

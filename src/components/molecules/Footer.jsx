@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import Link from '../atoms/Link'
 
-const FooterWrapper = styled.nav`
+const FooterBase = styled.nav`
 	flex-wrap: wrap;
 	flex: 0 1;
 	width: 100%;
@@ -23,9 +23,9 @@ const FooterWrapper = styled.nav`
 `
 
 export default function Footer( { ...props } ) {
-    return <FooterWrapper { ...props }>
+    return <FooterBase { ...props }>
 	
         <Link href='https://github.com/actuallymentor' target='_blank'>© Mentor</Link>
 
-    </FooterWrapper>
+    </FooterBase>
 }

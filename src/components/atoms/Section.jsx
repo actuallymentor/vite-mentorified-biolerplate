@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { passable_props } from '../component_base'
 
-export default styled.section`
+const SectionBase = styled.section`
 	padding:  2rem min( 4rem, max( 1rem, calc( 30vw - 8rem ) ) );
 	margin: ${ ( { $margin='1rem 0' } ) => $margin };
 	display: flex;
@@ -14,4 +14,8 @@ export default styled.section`
         if( $shadow ) return `box-shadow: ${ theme.shadows[1] }; background: ${ theme.colors.backdrop };`
     } }
 	${ passable_props };
-`
+	`
+
+export default function Section( { ...props } ) {
+    return <SectionBase { ...props } />
+}

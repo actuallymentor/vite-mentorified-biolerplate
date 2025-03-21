@@ -21,7 +21,7 @@ const slideOut = keyframes`
 	}
 `
 
-export default styled.aside`
+const BottomBarBase = styled.aside`
 	position: fixed;
 	left: 0;
 	bottom: 0;
@@ -38,3 +38,7 @@ export default styled.aside`
 	animation-duration: ${ ( { success } ) => success ? '3s' : '.5s' };
 	animation-name: ${ ( { success, animate=false } ) => animate && ( success ? slideOut : slideIn ) };
 `
+
+export default function BottomBar( { ...props } ) {
+    return <BottomBarBase { ...props } />
+}

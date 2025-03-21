@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { passable_props } from '../component_base'
 import { useNavigate } from 'react-router-dom'
 
-const Button = styled.a`
+const ButtonBase = styled.a`
 	padding: ${ ( { scale=1 } ) => `${ scale * .5 }rem ${ scale }rem` };
 	font-size: ${ ( { scale=1 } ) => `${ scale }rem` };
 	text-decoration: none;
@@ -32,7 +32,7 @@ const Button = styled.a`
 	${ passable_props };
 `
 
-export default ( { href, navigate, ...props } ) => {
+export default function Button( { href, navigate, ...props } ) {
 
     const navigate_to = useNavigate()
 
@@ -41,5 +41,5 @@ export default ( { href, navigate, ...props } ) => {
         if( href ) window.open( href, '_blank' ).focus()
     }
 
-    return <Button onClick={ handle_navigate } { ...props } />
+    return <ButtonBase onClick={ handle_navigate } { ...props } />
 }

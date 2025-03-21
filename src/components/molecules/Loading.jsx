@@ -42,7 +42,7 @@ const Spinner = styled.div`
  * @param {object} props - Additional props to pass to the container element.
  * @returns {JSX.Element} The rendered Loading component.
  */
-export default ( { delay=200, message, children, ...props } ) => {
+export default function Loading( { delay=200, message, children, ...props } ) {
 
     const [ mount_time, set_mount_time ] = useState( Date.now() )
     const [ should_render, set_should_render ] = useState( delay ? false : true )

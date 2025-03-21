@@ -9,15 +9,14 @@ const rotate = keyframes`
 	}
 `
 
-export default styled.div`
-	
+const SpinnerBase = styled.div`
 	display: inline-block;
-    align-items: center;
-    justify-content: center;
+	align-items: center;
+	justify-content: center;
 	width: ${ ( { size=80 } ) => size }px;
 	height: ${ ( { size=80 } ) => size }px;
 	padding: ${ ( { padding='.5rem' } ) => padding };
-    margin: ${ ( { margin='1rem' } ) => margin };
+	margin: ${ ( { margin='1rem' } ) => margin };
 
 	&:after {
 		content: " ";
@@ -29,5 +28,8 @@ export default styled.div`
 		border-color: ${ ( { theme } ) => theme.colors.primary } transparent ${ ( { theme } ) => theme.colors.primary } transparent;
 		animation: ${ rotate } 1.2s linear infinite;
 	}
-
 `
+
+export default function Spinner( { ...props } ) {
+    return <SpinnerBase { ...props } />
+}

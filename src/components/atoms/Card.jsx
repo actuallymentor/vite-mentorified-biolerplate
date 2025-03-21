@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Card = styled.div`
+const CardBase = styled.div`
     background-color: ${ ( { theme } ) => theme.colors.backdrop };
     color: ${ ( { theme } ) => theme.colors.text };
     padding: 1rem 2rem;
@@ -9,5 +9,8 @@ export const Card = styled.div`
     width: 500px;
     flex-wrap: wrap;
     box-shadow: ${ ( { theme } ) => theme.shadows[0] };
-    
 `
+
+export default function Card( { ...props } ) {
+    return <CardBase { ...props } />
+}

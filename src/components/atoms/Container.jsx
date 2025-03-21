@@ -3,7 +3,7 @@ import { passable_props } from '../component_base'
 import Menu from '../molecules/Menu'
 import Footer from '../molecules/Footer'
 
-const Wrapper = styled.div`
+const ContainerBase = styled.div`
 	position: relative;
 	overflow: hidden;
 	background: ${ ( { theme } ) => theme.colors.backdrop };
@@ -39,7 +39,7 @@ const Wrapper = styled.div`
 
 export default function Container( { menu=true, $footer=true, children, ...props } ) {
 
-    return <Wrapper { ...props } $footer={ $footer }>
+    return <ContainerBase { ...props } $footer={ $footer }>
 
         { menu && <Menu /> }
 
@@ -50,5 +50,5 @@ export default function Container( { menu=true, $footer=true, children, ...props
         { $footer && <Footer /> }
 
 
-    </Wrapper>
+    </ContainerBase>
 }

@@ -5,13 +5,13 @@ import BottomBar from '../atoms/BottomBar'
 import { Text } from '../atoms/Text'
 
 // Functionality
-import { log, catcher } from '../../modules/helpers'
+import { log } from '../../modules/helpers'
 
 
 // ///////////////////////////////
 // Render component
 // ///////////////////////////////
-export default function ComponentName( ) {
+export default function NetworkStatus( ) {
 
     // ///////////////////////////////
     // State handling

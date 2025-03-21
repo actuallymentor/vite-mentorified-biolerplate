@@ -5,8 +5,8 @@ import { getAnalytics, logEvent } from "firebase/analytics"
 import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions'
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
-import { log, verbose, localhost } from './helpers'
 import { connectAuthEmulator, getAuth } from "firebase/auth"
+import { is_localhost, log } from "mentie"
 
 // ///////////////////////////////
 // Initialisation
@@ -24,7 +24,7 @@ const config = {
     measurementId: VITE_measurementId
 }
 
-verbose( 'Init firebase with ', config )
+log.info( 'Init firebase with ', config )
 
 // Firebase app
 let app_cache = undefined
@@ -69,8 +69,8 @@ export const auth = () => {
 
 // App check config
 if( import.meta.env.NODE_ENV === 'development' || VITE_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
-verbose( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
-const appcheck = localhost ? 'disabled ' : initializeAppCheck( app(), {
+log.info( 'Initialising app check with ', VITE_APPCHECK_DEBUG_TOKEN )
+const appcheck = is_localhost ? 'disabled ' : initializeAppCheck( app(), {
     provider: new ReCaptchaV3Provider( VITE_recaptcha_site_key ),
     isTokenAutoRefreshEnabled: true
 } )
@@ -106,7 +106,7 @@ export function listen_to_document( { collection, document, callback } ) {
     return onSnapshot( d, snap => {
 
         const data = snap.data()
-        verbose( `Retreived document ${ collection }/${ document }: `, data )
+        log.info( `Retreived document ${ collection }/${ document }: `, data )
         callback( data )
 
     } )
@@ -155,6 +155,6 @@ export async function write_document( { collection, document, data, add_timestam
 // ///////////////////////////////
 export function track_event( name ) {
     if( !name ) return
-    if( import.meta.env.NODE_ENV == 'development' ) return verbose( 'Dummy analytics event: ', name )
+    if( import.meta.env.NODE_ENV == 'development' ) return log.info( 'Dummy analytics event: ', name )
     logEvent( analytics(), name )
 }

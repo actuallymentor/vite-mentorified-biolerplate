@@ -1,5 +1,5 @@
+import { log } from "mentie"
 import { useEffect, useState } from "react"
-import { verbose, warn } from "../modules/helpers"
 
 // Helper function that notified the current window that the localstorage has been updated
 // for reasons, events are only dispatched to other windows, not the current one: https://stackoverflow.com/questions/35865481/storage-event-not-firing
@@ -22,15 +22,15 @@ export const set_item = ( key, content ) => {
         if( typeof content != 'string' ) content = JSON.stringify( content )
         store.setItem( key, content )
         try {
-            verbose( `Successfully set ${ key } to:`, JSON.parse( content ) )
+            log.info( `Successfully set ${ key } to:`, JSON.parse( content ) )
         } catch ( e ) {
-            verbose( `Successfully set ${ key } to:`, content )
+            log.info( `Successfully set ${ key } to:`, content )
         }
         notify()
         return { content }
 
     } catch ( e ) {
-        warn( `Error storing item in localstorage: `, e )
+        log.warn( `Error storing item in localstorage: `, e )
         return { error: e.message }
     }
 
@@ -50,11 +50,11 @@ export const get_item = ( name, format='json' ) => {
         if( format == 'json' ) content = JSON.parse( content )
         else content = `${ content }`
 
-        verbose( `Successfully got ${ name }:`, content )
+        log.info( `Successfully got ${ name }:`, content )
         return { content }
 
     } catch ( e ) {
-        warn( `Error retreiving item in localstorage: `, e )
+        log.warn( `Error retreiving item in localstorage: `, e )
         return { error: e.message }
     }
 
@@ -71,7 +71,7 @@ export const remove_item = key => {
         window.localStorage.removeItem( key )
         notify()
     } catch ( e ) {
-        warn( `Error removing item from localstorage: `, e )
+        log.warn( `Error removing item from localstorage: `, e )
         return { error: e.message }
     }
 
@@ -104,8 +104,8 @@ export const useLocalStorage = ( { key, default_value={}, format='json', get_on_
         if( !get_on_mount ) return
 
         const { content, error } = get_item( key, format )
-        if( error ) return warn( `Error getting item from localstorage: `, error )
-        verbose( `Got item from localstorage: `, content )
+        if( error ) return log.warn( `Error getting item from localstorage: `, error )
+        log.info( `Got item from localstorage: `, content )
         setValue( content || default_value )
 
     }, [ key, format, get_on_mount ] )
@@ -119,13 +119,13 @@ export const useLocalStorage = ( { key, default_value={}, format='json', get_on_
             const { content, error } = get_item( key, format )
 
             // If there was an error, return
-            if( error ) return warn( `Error getting item from localstorage: `, error )
+            if( error ) return log.warn( `Error getting item from localstorage: `, error )
 
             // Check (naively) if new content differs from current value
-            if( JSON.stringify( content ) == JSON.stringify( value ) ) return verbose( `Value didn't change: `, content, value )
+            if( JSON.stringify( content ) == JSON.stringify( value ) ) return log.info( `Value didn't change: `, content, value )
 
             // If the value changed, update the state
-            verbose( `Value changed: `, key, content )
+            log.info( `Value changed: `, key, content )
             setValue( content || default_value )
 
         }

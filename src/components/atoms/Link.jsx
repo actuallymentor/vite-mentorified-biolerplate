@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { passable_props } from '../component_base'
 import { useNavigate } from 'react-router-dom'
 
-const A = styled.a`
+const AWrap = styled.a`
     display: inline;
 	color: ${ ( { $color='primary', theme } ) => theme.colors[ $color ] || $color };
 	font-size: 1rem;
@@ -16,7 +16,7 @@ const A = styled.a`
 	${ passable_props };
 `
 
-export default ( { href, navigate, new_tab=false, ...props } ) => {
+export default function A( { href, navigate, new_tab=false, ...props } ) {
 
     const navigate_to = useNavigate()
 
@@ -26,6 +26,6 @@ export default ( { href, navigate, new_tab=false, ...props } ) => {
         if( href && !new_tab ) window.open( href, '_self' )
     }
 
-    return <A onClick={ handle_navigate } { ...props }/>
+    return <AWrap onClick={ handle_navigate } { ...props }/>
 
 }

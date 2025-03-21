@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import Section from '../atoms/Section'
 import { passable_props } from '../component_base'
 
-const HeroWrapper =  styled( Section )`
+const HeroBase =  styled( Section )`
 	position: relative;
 	width: 100%;
 	min-height: 600px;
@@ -71,12 +71,12 @@ export default function Hero( { children, ...props } ) {
 
     const { $background_image } = props
 
-    return <HeroWrapper { ...props }>
+    return <HeroBase { ...props }>
 
         { $background_image && <HeroContainer { ...props }>
             <img className="background" src={ $background_image } alt="Hero background image" />
         </HeroContainer> }
         <HeroContainer { ...props }>{ children }</HeroContainer>
 		
-    </HeroWrapper>
+    </HeroBase>
 }

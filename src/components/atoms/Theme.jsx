@@ -1,6 +1,6 @@
+import { log } from 'mentie'
 import React, { useEffect, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
-import { log } from '../../modules/helpers'
 
 const shared_colors = {
     accent: 'lightgreen',
@@ -44,7 +44,7 @@ const theme_dark = {
     }
 }
 
-export default props => {
+export default function Theme( props ) {
 
     const [ dark, setDark ] = useState( false )
 
@@ -52,18 +52,18 @@ export default props => {
 
         // If API is not available, assume light
         if( !window.matchMedia ) {
-            log( 'No darkmode detection support' )
+            log.info( 'No darkmode detection support' )
             return setDark( false )
         }
 
         // Check with API
         const prefers_dark = window.matchMedia( '(prefers-color-scheme: dark)' ).matches
         setDark( prefers_dark )
-        log( `User prefers ${ prefers_dark ? 'dark' : 'light' } theme` )
+        log.info( `User prefers ${ prefers_dark ? 'dark' : 'light' } theme` )
 
         // Enable a listener
         window.matchMedia( '(prefers-color-scheme: dark)' ).addEventListener( 'change', event => {
-            log( 'Darkmode setting changed to ', event.matches )
+            log.info( 'Darkmode setting changed to ', event.matches )
             setDark( event.matches )
         } )
 

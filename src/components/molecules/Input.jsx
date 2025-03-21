@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import { useEffect, useRef, useState } from 'react'
 import { passable_props } from '../component_base'
-import { log } from '../../modules/helpers'
 import { useDebounce } from 'use-debounce'
 import useInterval from 'use-interval'
+import { log } from 'mentie'
 
-const Input = styled.span`
+const InputBase = styled.span`
 
 	display: flex;
 	flex-direction: column;
@@ -101,7 +101,7 @@ const Input = styled.span`
  * @param {number} props.validation_delay - The delay in milliseconds for input validation.
  * @returns {JSX.Element} The rendered Input component.
  */
-export default ( { onChange, type, label, info, highlight, id, title, onClick, options, validate, error, verbose=false, validation_delay=2000, ...props } ) => {
+export default function Input( { onChange, type, label, info, highlight, id, title, onClick, options, validate, error, verbose=false, validation_delay=2000, ...props } ) {
 
     const { current: internalId } = useRef( id || `input-${ Math.random() }` )
     const special_types = [ 'dropdown', 'textarea' ]
@@ -118,18 +118,18 @@ export default ( { onChange, type, label, info, highlight, id, title, onClick, o
     const [ is_typing, set_is_typing ] = useState( false )
     useEffect( () => {
 
-        // If verbose mode is enabled, log the validation
-        if( verbose ) log( `Validating ${ typeof value } value ${ value } with validation (${ validation_delay }ms):`, validate, ` empty: ${ empty }, valid: ${ valid }, typing: ${ is_typing }` )
+        // If verbose mode is enabled, log.info the validation
+        if( verbose ) log.info( `Validating ${ typeof value } value ${ value } with validation (${ validation_delay }ms):`, validate, ` empty: ${ empty }, valid: ${ valid }, typing: ${ is_typing }` )
 
         // If there is no validation, assume valid
         if( !validate ) {
-            if( verbose ) log( 'No validation, assuming valid' )
+            if( verbose ) log.info( 'No validation, assuming valid' )
             return set_raw_valid( true )
         }
 
         // If there is no value, assume valid
         if( empty ) {
-            if( verbose ) log( 'Input empty, assuming valid' )
+            if( verbose ) log.info( 'Input empty, assuming valid' )
             return set_raw_valid( undefined )
         }
 
@@ -152,7 +152,7 @@ export default ( { onChange, type, label, info, highlight, id, title, onClick, o
         } catch ( e ) {
 
             set_raw_valid( false )
-            log( 'Validation failed', e )
+            log.info( 'Validation failed', e )
 
         }
 
@@ -162,11 +162,11 @@ export default ( { onChange, type, label, info, highlight, id, title, onClick, o
     const time_to_idle_in_ms = 500
     useInterval( () => {
         const typing_timed_out = Date.now() - last_edit > time_to_idle_in_ms
-        if( verbose ) log( 'Typing timed out: ', typing_timed_out )
+        if( verbose ) log.info( 'Typing timed out: ', typing_timed_out )
         if( typing_timed_out ) set_is_typing( false )
     }, value && !valid ? 1000 : null )
 
-    return <Input onClick={ onClick } highlight={ highlight } { ...{ ...parent_props, $has_content: value?.length > 0 } } $valid={ valid } >
+    return <InputBase onClick={ onClick } highlight={ highlight } { ...{ ...parent_props, $has_content: value?.length > 0 } } $valid={ valid } >
 
         { label && <label htmlFor={ internalId }><span>{ label }</span> { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
 
@@ -185,6 +185,6 @@ export default ( { onChange, type, label, info, highlight, id, title, onClick, o
 
         { !is_typing && !empty && !valid && <p id="error">{ error || `Please enter a valid ${ type || 'input' }` }</p> }
 		
-    </Input>
+    </InputBase>
 
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { write_document } from "../modules/firebase"
 import { useDebounce } from "use-debounce"
-import { verbose, log, warn } from "../modules/helpers"
+import { log } from "mentie"
 
 
 /**
@@ -11,7 +11,7 @@ import { verbose, log, warn } from "../modules/helpers"
  * @param {string} options.collection - The Firestore collection to save the document to.
  * @param {string} options.document - The document ID to save.
  * @param {Object} [options.content={}] - The content of the document to save.
- * @param {boolean} [options.verbose=false] - Whether to log verbose output.
+ * @param {boolean} [options.log.info=false] - Whether to log log.info output.
  * @param {number} [options.debounce_interval=1000] - The debounce interval in milliseconds.
  * 
  * @returns {Object} - The data object and the updated timestamp.
@@ -31,19 +31,19 @@ export const useAutosavedDocument = ( { collection, document, content={}, deboun
 
             // If the lengths are not equal, return false
             if( prev_keys.length !== next_keys.length ) {
-                verbose( `Lengths are not equal` )
+                log.info( `Lengths are not equal` )
                 return false
             }
             
             // Find the first key whose value differs
             const first_key = prev_keys.find( key => prev[ key ] !== next[ key ] )
             if( first_key ) {
-                verbose( `First key that differs is ${ first_key }` )
+                log.info( `First key that differs is ${ first_key }` )
                 return false
             }
 
             // If no key differs, return true
-            verbose( `No key differs, returning true` )
+            log.info( `No key differs, returning true` )
             return true
         }
     } )
@@ -52,25 +52,25 @@ export const useAutosavedDocument = ( { collection, document, content={}, deboun
     useEffect( () => {
 
         // If the hook is not active, exit
-        verbose( `Autosave active: `, active )
+        log.info( `Autosave active: `, active )
         if( !active ) return
 
         // Log the change
-        verbose( `Debounced document changed to: `, data )
+        log.info( `Debounced document changed to: `, data )
 
         // If the data is not an object, don't save it
         if( typeof data !== `object` ) return
 
         // If the user did not type anything yet, do not save
-        if( Object.keys( data ).length === 0 ) return log( `Data has no properties: `, data )
+        if( Object.keys( data ).length === 0 ) return log.info( `Data has no properties: `, data )
 
         // Write the document to firestore, this is an async operation
         write_document( { collection, document, data } )
             .then( f => {
-                log( `Document saved at ${ Date.now().toString() }` )
+                log.info( `Document saved at ${ Date.now().toString() }` )
                 set_updated( Date.now() )
             } )
-            .catch( e => warn( `Error saving document: `, e ) )
+            .catch( e => log.warn( `Error saving document: `, e ) )
 
     }, [ data ] )
 

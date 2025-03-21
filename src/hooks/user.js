@@ -1,8 +1,8 @@
 import { onAuthStateChanged } from "firebase/auth"
 import { useEffect, useState } from "react"
 import { auth } from "../modules/firebase"
-import { log, verbose } from "../modules/helpers"
 import { get_item, remove_item, set_item } from "./local-storage"
+import { log } from "mentie"
 
 
 /**
@@ -24,7 +24,7 @@ export const useUser = () => {
 
         // If firebase state is still loading, and localstorage has a user, set it to state
         if( !user.source && last_known_user ) {
-            verbose( `Setting recovered user to state: `, last_known_user )
+            log.info( `Setting recovered user to state: `, last_known_user )
             set_user( { ...last_known_user, source: 'cache' } )
         }
 
@@ -34,7 +34,7 @@ export const useUser = () => {
     useEffect( () => {
 
         // Log the user change
-        verbose( `User changed: `, user )
+        log.info( `User changed: `, user )
 
         // If no user is logged in, exit
         if( !user.source ) return
@@ -65,7 +65,7 @@ export const useUser = () => {
     }, [] )
 
     // if the user uid changed, log it out
-    useEffect( () => log( `User changed: `, user ), [ user.uid ] )
+    useEffect( () => log.info( `User changed: `, user ), [ user.uid ] )
 
     // Return user
     return user
