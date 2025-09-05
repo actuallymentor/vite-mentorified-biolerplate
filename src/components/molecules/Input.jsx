@@ -81,6 +81,7 @@ const InputBase = styled.span`
 
 `
 
+
 /**
  * Input component for forms.
  *
@@ -101,14 +102,15 @@ const InputBase = styled.span`
  * @param {number} props.validation_delay - The delay in milliseconds for input validation.
  * @returns {JSX.Element} The rendered Input component.
  */
-export default function Input( { onChange, type, label, info, highlight, id, title, onClick, options, validate, error, verbose=false, validation_delay=2000, ...props } ) {
+export default function Input( { onChange, onEnter, type, label, info, highlight, id, title, onClick, options, validate, error, verbose=false, validation_delay=500, ...props } ) {
 
     const { current: internalId } = useRef( id || `input-${ Math.random() }` )
     const special_types = [ 'dropdown', 'textarea' ]
+    const [ is_focused, set_is_focused ] = useState( false )
 
     // Separate props into parent and childs
-    const { placeholder, value, ...parent_props } = props
-    const child_props = { placeholder, value }
+    const { placeholder, value, min, max, readOnly, ...parent_props } = props
+    const child_props = { placeholder, value, min, max, readOnly }
 
     // Manage validation
     const empty = !value || `${ value }`.length == 0
@@ -116,9 +118,24 @@ export default function Input( { onChange, type, label, info, highlight, id, tit
     const [ valid ] = useDebounce( empty || raw_valid, validation_delay, { leading: true } )
     const [ last_edit, set_last_edit ] = useState( Date.now() )
     const [ is_typing, set_is_typing ] = useState( false )
+
+    // Handle focus events
+    const handle_focus = () => set_is_focused( true )
+    const handle_blur = () => set_is_focused( false )
+
+    // Enhanced onChange to include focus handling
+    const handle_change = ( event ) => {
+        if( onChange ) onChange( event )
+    }
+
+    // Handle enter key press
+    const handle_enter = ( event ) => {
+        if( event.key === 'Enter' && onEnter ) onEnter( event )
+    }
+
     useEffect( () => {
 
-        // If verbose mode is enabled, log.info the validation
+        // If verbose mode is enabled, log the validation
         if( verbose ) log.info( `Validating ${ typeof value } value ${ value } with validation (${ validation_delay }ms):`, validate, ` empty: ${ empty }, valid: ${ valid }, typing: ${ is_typing }` )
 
         // If there is no validation, assume valid
@@ -135,6 +152,7 @@ export default function Input( { onChange, type, label, info, highlight, id, tit
 
         // Mark the last edit
         if( `${ value }`.length > 0 ) {
+            if( verbose ) log.info( `Input changed, setting last edit to ${ Date.now() }` )
             set_last_edit( Date.now() )
             set_is_typing( true )
         }
@@ -156,28 +174,29 @@ export default function Input( { onChange, type, label, info, highlight, id, tit
 
         }
 
-    }, [ value, empty, validate ] )
+    }, [ value, empty ] )
 
     // If there is a value, periodically set the time since typing
-    const time_to_idle_in_ms = 500
+    const time_to_idle_in_ms = validation_delay
     useInterval( () => {
         const typing_timed_out = Date.now() - last_edit > time_to_idle_in_ms
-        if( verbose ) log.info( 'Typing timed out: ', typing_timed_out )
-        if( typing_timed_out ) set_is_typing( false )
+        log.info( `TTime since typing: ${ Date.now() - last_edit }ms` )
+        if( verbose ) log.info( 'Typing timed out: ', typing_timed_out, { last_edit, time_to_idle_in_ms, is_typing, empty, valid } )
+        if( typing_timed_out && is_typing ) set_is_typing( false )
     }, value && !valid ? 1000 : null )
 
-    return <InputBase onClick={ onClick } highlight={ highlight } { ...{ ...parent_props, $has_content: value?.length > 0 } } $valid={ valid } >
+    return <InputBase onClick={ onClick } highlight={ highlight } { ...{ ...parent_props, $has_content: value?.length > 0, $is_focused: is_focused } } $valid={ valid } >
 
-        { label && <label htmlFor={ internalId }><span>{ label }</span> { info && <span onClick={ f => alert( info ) }>?</span> }</label> }
+        { label && <label htmlFor={ internalId }><span>{ label }</span> { info && <span onClick={ f => alert( info ) } onMouseDown={ e => e.preventDefault() }>?</span> }</label> }
 
         { /* Regular input field */ } 
-        { !title && !special_types.includes( type ) && <input data-testid={ internalId } { ...child_props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
-        
+        { !title && !special_types.includes( type ) && <input data-testid={ internalId } { ...child_props } onKeyDown={ handle_enter } id={ internalId } onChange={ handle_change } onFocus={ handle_focus } onBlur={ handle_blur } type={ type || 'text' } /> }
+
         { /* Textarea input field */ }
-        { !title && type == 'textarea' && <textarea data-testid={ internalId } { ...child_props } id={ internalId } onChange={ onChange } type={ type || 'text' } /> }
+        { !title && type == 'textarea' && <textarea data-testid={ internalId } { ...child_props } id={ internalId } onChange={ handle_change } onFocus={ handle_focus } onBlur={ handle_blur } type={ type || 'text' } /> }
 
         { /* Dropdown input field */ }
-        { !title && type == 'dropdown' && <select id={ internalId } onChange={ onChange }>
+        { !title && type == 'dropdown' && <select id={ internalId } onChange={ handle_change } onFocus={ handle_focus } onBlur={ handle_blur } { ...child_props }>
             { options.map( ( option, index ) => <option key={ index } value={ option.value }>{ option.label }</option> ) }
         </select> }
 

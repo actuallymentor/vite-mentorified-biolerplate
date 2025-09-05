@@ -10,8 +10,18 @@ export const Text = styled.p`
 	overflow-wrap: anywhere;
 	background: ${ ( { background='initial' } ) => background };
 	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 	font-style: ${ ( { $style='normal' } ) => $style };
 	${ passable_props };
+`
+
+
+export const Span = styled.span`
+	color: ${ ( { theme, $color = 'text' } ) => theme.colors[$color] || $color };
+	font-weight: ${ ( { $weight = 'normal' } ) => $weight };
+	font-style: ${ ( { $style = 'normal' } ) => $style };
+	text-decoration: ${ ( { $decoration = 'none' } ) => $decoration };
 `
 
 export const H1 = styled.h1`
