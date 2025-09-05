@@ -1,7 +1,7 @@
 import functions from 'firebase-functions'
 import { onCall } from 'firebase-functions/v2/https'
 import { v2_runtimes, v1_runtimes, validate_runtime_settings } from './runtimes_settings.mjs'
-import { log } from '../modules/helpers.mjs'
+import { log } from 'mentie'
 const debug = false
 
 /**

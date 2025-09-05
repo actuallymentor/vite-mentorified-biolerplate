@@ -1,9 +1,20 @@
-import { log } from "mentie"
-import { useEffect, useState } from "react"
+import { useState, useEffect, useRef } from 'react'
+import { log } from 'mentie'
 
-// Helper function that notified the current window that the localstorage has been updated
-// for reasons, events are only dispatched to other windows, not the current one: https://stackoverflow.com/questions/35865481/storage-event-not-firing
-const notify = () => window.dispatchEvent( new Event( 'storage' ) )
+// Custom event name for same-tab localStorage change notifications
+const STORAGE_EVENT = 'localstorage-change'
+
+// Helper to notify current tab listeners of a change to a specific key.
+// We use a CustomEvent with detail so handlers can filter by key and value,
+// avoiding reliance on the generic 'storage' event, which doesn't fire in the same tab.
+const notify = ( key, valueString ) => {
+    try {
+        const detail = { key, value: valueString }
+        window.dispatchEvent( new CustomEvent( STORAGE_EVENT, { detail } ) )
+    } catch ( e ) {
+        log.warn( 'Failed to dispatch localstorage-change event:', e )
+    }
+}
 
 // Get the localstorage object
 const { localStorage: store } = window
@@ -19,14 +30,15 @@ export const set_item = ( key, content ) => {
     try {
 
         // If the content is not a string, stringify it (localstorage only takes strings)
-        if( typeof content != 'string' ) content = JSON.stringify( content )
-        store.setItem( key, content )
+        let valueString = typeof content === 'string' ? content : JSON.stringify( content )
+        store.setItem( key, valueString )
         try {
-            log.info( `Successfully set ${ key } to:`, JSON.parse( content ) )
+            log.info( `Successfully set ${ key } to:`, JSON.parse( valueString ) )
         } catch ( e ) {
-            log.info( `Successfully set ${ key } to:`, content )
+            log.info( `Successfully set ${ key } to:`, valueString )
         }
-        notify()
+        // Notify same-tab listeners with the serialized value
+        notify( key, valueString )
         return { content }
 
     } catch ( e ) {
@@ -46,9 +58,19 @@ export const get_item = ( name, format='json' ) => {
 
     try {
 
-        let content = store.getItem( name )
-        if( format == 'json' ) content = JSON.parse( content )
-        else content = `${ content }`
+        const raw = store.getItem( name )
+        let content = null
+        if( raw === null ) {
+            content = null
+        } else if( format === 'json' ) {
+            try {
+                content = JSON.parse( raw )
+            } catch ( e ) {
+                content = null
+            }
+        } else {
+            content = `${ raw }`
+        }
 
         log.info( `Successfully got ${ name }:`, content )
         return { content }
@@ -69,7 +91,7 @@ export const remove_item = key => {
 
     try {
         window.localStorage.removeItem( key )
-        notify()
+        notify( key, null )
     } catch ( e ) {
         log.warn( `Error removing item from localstorage: `, e )
         return { error: e.message }
@@ -90,11 +112,32 @@ export const remove_item = key => {
 export const useLocalStorage = ( { key, default_value={}, format='json', get_on_mount=false, report_loading_state=false } ) => {
 
     const [ value, setValue ] = useState( report_loading_state ? { loading: true } : {} )
+    const valueRef = useRef( value )
+    const serializedRef = useRef( undefined )
+
+    // Keep refs in sync with state
+    useEffect( () => {
+        valueRef.current = value
+        try {
+            serializedRef.current = typeof value === 'string' ? value : JSON.stringify( value )
+        } catch ( e ) {
+            serializedRef.current = undefined
+        }
+    }, [ value ] )
 
     // Updater function for the localstorage state
     const set = value => {
+        // Set in storage (also notifies same-tab)
         set_item( key, value )
+        // Update local state immediately
         setValue( value )
+        // Update refs proactively to avoid reacting to our own echo event
+        try {
+            serializedRef.current = typeof value === 'string' ? value : JSON.stringify( value )
+        } catch ( e ) {
+            log.info( 'Failed to serialize value for localstorage ref sync' )
+        }
+        valueRef.current = value
     }
 
     // Get the value from localstorage on mount if requested
@@ -106,34 +149,66 @@ export const useLocalStorage = ( { key, default_value={}, format='json', get_on_
         const { content, error } = get_item( key, format )
         if( error ) return log.warn( `Error getting item from localstorage: `, error )
         log.info( `Got item from localstorage: `, content )
-        setValue( content || default_value )
+        const next = content === null || content === undefined ? default_value : content
+        setValue( next )
+        try {
+            serializedRef.current = typeof next === 'string' ? next : JSON.stringify( next )
+        } catch ( e ) {
+            log.info( 'Failed to serialize next value for localstorage mount sync' )
+        }
+        valueRef.current = next
 
     }, [ key, format, get_on_mount ] )
 
     // Listen to localstorage events
     useEffect( () => {
 
-        const handle_storage_change = event => {
-
-            // // Get the current value of the key, reason for not using event.key is that this does not work cross-tab
-            const { content, error } = get_item( key, format )
-
-            // If there was an error, return
-            if( error ) return log.warn( `Error getting item from localstorage: `, error )
-
-            // Check (naively) if new content differs from current value
-            if( JSON.stringify( content ) == JSON.stringify( value ) ) return log.info( `Value didn't change: `, content, value )
-
-            // If the value changed, update the state
-            log.info( `Value changed: `, key, content )
-            setValue( content || default_value )
-
+        const parseByFormat = ( raw ) => {
+            if( raw === null || raw === undefined ) return null
+            if( format === 'json' ) {
+                try {
+                    return JSON.parse( raw )
+                } catch ( e ) {
+                    return null
+                }
+            }
+            return `${ raw }`
         }
 
-        window.addEventListener( 'storage', handle_storage_change )
-        return () => window.removeEventListener( 'storage', handle_storage_change )
+        const handleCustom = ( event ) => {
+            const { detail } = event
+            if( !detail || detail.key !== key ) return
+            const newRaw = detail.value
+            const newSerialized = newRaw == null ? null : `${ newRaw }`
 
-    }, [ key ] )
+            // Compare serialized form to avoid duplicate same-tab updates
+            if( serializedRef.current === newSerialized ) return
+
+            const next = newRaw == null ? default_value : parseByFormat( newRaw )
+            log.info( `Value changed (custom): `, key, { old: valueRef.current, new: next } )
+            setValue( next )
+        }
+
+        const handleStorage = ( event ) => {
+            // Only react to our key and ignore unrelated storage changes
+            if( event.key !== key ) return
+            const newRaw = event.newValue
+            const newSerialized = newRaw == null ? null : `${ newRaw }`
+            if( serializedRef.current === newSerialized ) return
+
+            const next = newRaw == null ? default_value : parseByFormat( newRaw )
+            log.info( `Value changed (storage): `, key, { old: valueRef.current, new: next } )
+            setValue( next )
+        }
+
+        window.addEventListener( STORAGE_EVENT, handleCustom )
+        window.addEventListener( 'storage', handleStorage )
+        return () => {
+            window.removeEventListener( STORAGE_EVENT, handleCustom )
+            window.removeEventListener( 'storage', handleStorage )
+        }
+
+    }, [ key, format, default_value ] )
 
     return [ value, set ]
 

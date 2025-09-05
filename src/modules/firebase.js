@@ -6,7 +6,7 @@ import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
 import { connectAuthEmulator, getAuth } from "firebase/auth"
-import { is_localhost, log } from "mentie"
+import { cache, is_localhost, log } from "mentie"
 
 // ///////////////////////////////
 // Initialisation
@@ -27,45 +27,19 @@ const config = {
 log.info( 'Init firebase with ', config )
 
 // Firebase app
-let app_cache = undefined
-const app = () => {
-    if( app_cache ) return app_cache
-    app_cache = initializeApp( config )
-    return app_cache
-}
+const app = () => cache( `firebase_app` ) || cache( `firebase_app`, initializeApp( config ) )
 
 // Analytics
-let analytics_cache = undefined
-const analytics = () => {
-    if( analytics_cache ) return analytics_cache
-    analytics_cache = getAnalytics( app() )
-    return analytics_cache
-}
+const analytics = () => cache( `firebase_analytics` ) || cache( `firebase_analytics`, getAnalytics( app() ) )
 
 // Firestore
-let db_cache = undefined
-export const db = () => {
-    if( db_cache ) return db_cache
-    db_cache = getFirestore( app() )
-    return db_cache
-
-}
+export const db = () => cache( `firebase_db` ) || cache( `firebase_db`, getFirestore( app() ) )
 
 // Functions
-let functions_cache = undefined
-export const functions = () => {
-    if( functions_cache ) return functions_cache
-    functions_cache = getFunctions( app() )
-    return functions_cache
-}
+export const functions = () => cache( `firebase_functions` ) || cache( `firebase_functions`, getFunctions( app() ) )
 
 // Auth
-let auth_cache = undefined
-export const auth = () => {
-    if( auth_cache ) return auth_cache
-    auth_cache = getAuth( app() )
-    return auth_cache
-}
+export const auth = () => cache( `firebase_auth` ) || cache( `firebase_auth`, getAuth( app() ) )
 
 // App check config
 if( import.meta.env.NODE_ENV === 'development' || VITE_APPCHECK_DEBUG_TOKEN ) self.FIREBASE_APPCHECK_DEBUG_TOKEN = VITE_APPCHECK_DEBUG_TOKEN || true
@@ -141,6 +115,13 @@ export async function write_document( { collection, document, data, add_timestam
     if( !document ) {
         data.created = Date.now()
         data.created_human = new Date().toString()
+    }
+
+    // Go through all keys and delete those that have the value undefined
+    for( const key in data ) {
+        if( data[ key ] === undefined ) {
+            delete data[ key ]
+        }
     }
 
     // Returnd a document reference, returns the format { id: 'document_id' }

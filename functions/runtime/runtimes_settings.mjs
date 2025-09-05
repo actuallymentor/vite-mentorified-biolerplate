@@ -1,4 +1,4 @@
-import { dev } from "../modules/helpers.mjs"
+import { dev, log } from 'mentie'
 
 // Function to reduce an array of memory declarations to an object of memory declarations
 const reduce_memory_declarations = ( acc, memory ) => ( { ...acc, [ `memory_${ memory }` ]: { memory } } )
@@ -51,7 +51,7 @@ export const validate_runtime_settings = ( runtimes, allowed_runtimes, throw_on_
     const runtime_keys = Object.keys( allowed_runtimes )
     const invalid_runtime_keys = runtimes.filter( runtime_key => !runtime_keys.includes( runtime_key ) )
     if( invalid_runtime_keys.length ) {
-        console.error( `Invalid runtime keys: `, invalid_runtime_keys )
+        log.error( `Invalid runtime keys: `, invalid_runtime_keys )
         if( throw_on_fail ) throw new Error( `Invalid runtime keys: ${ invalid_runtime_keys.length }` )
         else return false
     }
